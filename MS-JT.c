@@ -57,19 +57,33 @@ void main (void) {
 #if(PROTOCOL == MS)							// nodul este slave, asteapta mesaj complet si corect de la master	
 
 				switch(RxMesaj(ADR_NOD)){			// asteapta un mesaj de la master
-					case TMO:							// anunta ca nodul curent devine master
-														// nodul curent devine master
-														// Afiseaza meniul de comenzi
-														// trece in starea 2
-														// primul slave va fi cel care urmeaza dupa noul master
+					case TMO:							
+														// anunta ca nodul curent devine master	???
+						TIP_NOD=MASTER;								// nodul curent devine master
+						Afisare_meniu();								// Afiseaza meniul de comenzi
+						STARE_COM=2;								// trece in starea 2
+														// primul slave va fi cel care urmeaza dupa noul master	????
 								break;
 
-					case ROK:									break;	// a primit un mesaj de la master, il afiseaza
-					case POK:	STARE_COM = 1; 	break;					// si trebuie sa raspunda
-					case CAN:									break;	// afiseaza eroare Mesaj incomplet
-					case TIP:									break;	// afiseaza eroare Tip mesaj necunoscut
-					case ESC:									break;	// afiseaza Eroare SC
-					default:									break;	// afiseaza cod eroare necunoscut, asteapta 1 sec
+					case ROK:									
+						AfisareMesaj();
+						break;	// a primit un mesaj de la master, il afiseaza
+					case POK:	
+						STARE_COM = 1; 					
+						break;	// si trebuie sa raspunda
+					case CAN:
+						Error("Mesaj incomplet");								
+						break;	// afiseaza eroare Mesaj incomplet
+					case TIP:									
+						Error("Tip mesaj necunoscut");
+						break;	// afiseaza eroare Tip mesaj necunoscut
+					case ESC:
+						Error("Eroare SC");									
+						break;	// afiseaza Eroare SC
+					default:
+						Error("cod UNK");
+						Delay(1000);
+						break;	// afiseaza cod eroare necunoscut, asteapta 1 sec
 				}
 #endif
 
@@ -84,9 +98,6 @@ void main (void) {
 																// trece in starea 1
 						break;
 
-					case ROK:								// a primit un mesaj USER_MES
-																// il afiseaza			
-						break;
 					
 					case JOK:								// a primit jetonul
 						
@@ -97,18 +108,7 @@ void main (void) {
 																						// tip mesaj = JET_MES
 																						// transmite mesajul JET_MES din bufferul ADR_NOD
 																						// nodul curent detine jetonul
-						if(AFISARE) 										// Daca e permisa afisarea
-																				// afiseaza meniul de comenzi		
-																			// trece in starea 1
-						break; 								// acum nodul detine jetonul, poate trece sa transmita un mesaj de date
-
-					case CAN:												break;		// afiseaza eroare Mesaj incomplet
-					case CAN_adresa_hw_src:	 								break;		// afiseaza eroare Mesaj incomplet (adresa_hw_src)
-					case CAN_tipmes:										break;		// afiseaza eroare Mesaj incomplet (tip mesaj)
-					case CAN_sc:											break;		// afiseaza eroare Mesaj incomplet (sc)
-					case TIP:												break;		// afiseaza eroare Tip mesaj necunoscut
-					case ESC:	 											break;		// afiseaza Eroare SC
-					default:												break;		// afiseaza cod eroare necunoscut, apoi asteapta 1 sec
+  
 				}
 #endif								
 				break;
