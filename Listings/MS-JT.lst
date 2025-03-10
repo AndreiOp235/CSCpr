@@ -1,4 +1,4 @@
-C51 COMPILER V8.02   MS_JT                                                                 03/10/2025 16:24:59 PAGE 1   
+C51 COMPILER V8.02   MS_JT                                                                 03/10/2025 17:13:24 PAGE 1   
 
 
 C51 COMPILER V8.02, COMPILATION OF MODULE MS_JT
@@ -62,7 +62,7 @@ line level    source
   50   1              Afisare_meniu();                                                // Afiseaza meniul de comenzi
   51   1              
   52   1              while(1){                                                               // bucla infinita
-C51 COMPILER V8.02   MS_JT                                                                 03/10/2025 16:24:59 PAGE 2   
+C51 COMPILER V8.02   MS_JT                                                                 03/10/2025 17:13:24 PAGE 2   
 
   53   2                                                                                                                                      
   54   2                      switch(STARE_COM){
@@ -126,7 +126,7 @@ line level    source
                 
                                               }
               #endif                                                          
-C51 COMPILER V8.02   MS_JT                                                                 03/10/2025 16:24:59 PAGE 3   
+C51 COMPILER V8.02   MS_JT                                                                 03/10/2025 17:13:24 PAGE 3   
 
  115   3                                      break;
  116   3      
@@ -190,7 +190,7 @@ line level    source
  174   4                                              TxMesaj(i);                                                                             // transmite mesajul din bufferul i
  175   4                                      }                                                                                                       
  176   3                                                                                                                                              
-C51 COMPILER V8.02   MS_JT                                                                 03/10/2025 16:24:59 PAGE 4   
+C51 COMPILER V8.02   MS_JT                                                                 03/10/2025 17:13:24 PAGE 4   
 
  177   3                                      STARE_COM=3;                                                                            // trece in starea 3, sa astepte raspunsul de la slave-ul i
  178   3      
@@ -208,25 +208,38 @@ line level    source
  190   3      #if(PROTOCOL == MS)                                                                             // nodul este master, asteapta mesaj de la slave        
  191   3                                                                                                                                      
  192   3                                      switch(RxMesaj(i)){                                                             // asteapta un raspuns de la slave i
- 193   4                                              case TMO:                                                                               // afiseaza eroare Timeout nod i
- 194   4                                                                      
- 195   4                                                                      break;
- 196   4                                              case ROK:                                                                                                       break;  // a primit un mesaj de date, il afiseaza
- 197   4                                                                                                                                                                                      // a primit un mesaj de interogare, trece mai departe
- 198   4                                              case ERI:                                                                                                       break;  // afiseaza Eroare incadrare
- 199   4                                              case ERA:                                                                                                       break;  // afiseaza Eroare adresa
- 200   4                                              case TIP:                                                                                                       break;  // afiseaza Tip mesaj necunoscut
- 201   4                                              case OVR:                                                                                                       break;  // afiseaza Eroare suprapunere
- 202   4                                              case ESC:                                                                                                       break;  // afiseaza Eroare SC
- 203   4                                              case CAN:                                                                                                       break;  // afiseaza mesaj incomplet
- 204   4      
- 205   4                                              default:                                                                                                        break;  // afiseaza Eroare necunoscuta, apoi asteapta 1000ms
- 206   4                                      }
- 207   3                                                                                                                                              // revine in starea 2 (a primit sau nu un raspuns de la slave, trece la urmatorul slave)
- 208   3      #endif
- 209   3      
- 210   3                              
- 211   3      #if(PROTOCOL == JT)                                                                                             // asteapta confirmarea primirii jetonului de care nodul i              
+ 193   4                                                      case TMO: {
+ 194   5                                                                                      char errMsg[20] = "Timeout nod ";  // Base string
+ 195   5                                                                                      errMsg[12] = i;  // Append character
+ 196   5                                                                                      errMsg[13] = '\0'; // Null terminate
+ 197   5                                                                                      Error(errMsg);
+ 198   5                                                                              break;
+ 199   5                                                                              }
+ 200   4      
+ 201   4                                              case ROK:                                                                                                       
+ 202   4                                                      if(retea[ADR_NOD].bufbin.tipmes==USER_MES)       // a primit un mesaj de date, il afiseaza
+ 203   4                                                                Afisare_mesaj();
+ 204   4                                              break;                                                                                          // a primit un mesaj de interogare, trece mai departe
+ 205   4                                                      
+ 206   4                                                                                                                                                                                      
+ 207   4                                              case ERI: Error("Eroare incadrare");                                            break;  // afiseaza Eroare incadrare
+ 208   4                                              case ERA: Error("Eroare adresa");                                                       break;  // afiseaza Eroare adresa
+ 209   4                                              case TIP: Error("Tip mesaj necunoscut");                                        break;  // afiseaza Tip mesaj necunoscut
+ 210   4                                              case OVR: Error("Eroare adresa");                                                       break;  // afiseaza Eroare suprapunere
+ 211   4                                              case ESC: Error("Eroare adresa");                                                       break;  // afiseaza Eroare SC
+ 212   4                                              case CAN: Error("Eroare adresa");                                                       break;  // afiseaza mesaj incomplet
+ 213   4      
+ 214   4                                              default:
+ 215   4                                              Error("Eroare adresa");
+ 216   4                                              Delay(1000);
+ 217   4                                              break;  // afiseaza Eroare necunoscuta, apoi asteapta 1000ms
+ 218   4                                      }
+ 219   3                                      STARE_COM=2;                                                                                                    // revine in starea 2 (a primit sau nu un raspuns de la slave, trece la urmat
+             -orul slave)
+ 220   3      #endif
+ 221   3      
+ 222   3                              
+ 223   3      #if(PROTOCOL == JT)                                                                                             // asteapta confirmarea primirii jetonului de care nodul i              
                                               switch(RxMesaj(i)){                                                                     // asteapta un raspuns de la nod i
                                                       case TMO:                                                                                                                               // afiseaza eroare Timeout nod i
                                                                               
@@ -241,6 +254,8 @@ line level    source
                                                                                                                                                                                                                       // revine in starea 0
                                                                                                                                                                                                                       // nodul nu mai detine jetonul
                                                                                                                                                                                                                       // afiseaza meniul
+C51 COMPILER V8.02   MS_JT                                                                 03/10/2025 17:13:24 PAGE 5   
+
                                                                                               break;                  
                                                       case ERA:                                                                                                                               // afiseaza Eroare adresa
                                                                                                                                                                                                                       // revine in starea 0
@@ -254,8 +269,6 @@ line level    source
                                                                                                                                                                                                                       // afiseaza meniul
                                                                                               break;                  
                                                       
-C51 COMPILER V8.02   MS_JT                                                                 03/10/2025 16:24:59 PAGE 5   
-
                                                       case TIP:                                                                                                                               // afiseaza Tip mesaj necunoscut
                                                                                                                                                                                                                       // revine in starea 0
                                                                                                                                                                                                                       // nodul nu mai detine jetonul
@@ -277,19 +290,19 @@ line level    source
                                       }
                                               
               #endif
- 260   3                              
- 261   3                              break;                  
- 262   3                      }
- 263   2                      
- 264   2                      UserIO();                                                       // apel functie interfata
- 265   2              }
- 266   1      }
+ 272   3                              
+ 273   3                              break;                  
+ 274   3                      }
+ 275   2                      
+ 276   2                      UserIO();                                                       // apel functie interfata
+ 277   2              }
+ 278   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    399    ----
-   CONSTANT SIZE    =     55    ----
-   XDATA SIZE       =    169       2
+   CODE SIZE        =    559    ----
+   CONSTANT SIZE    =    106    ----
+   XDATA SIZE       =    169      22
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----

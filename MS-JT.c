@@ -190,21 +190,33 @@ void main (void) {
 #if(PROTOCOL == MS)										// nodul este master, asteapta mesaj de la slave	
 																
 				switch(RxMesaj(i)){								// asteapta un raspuns de la slave i
-					case TMO:										// afiseaza eroare Timeout nod i
-								
-								break;
-					case ROK:													break;	// a primit un mesaj de date, il afiseaza
-																						// a primit un mesaj de interogare, trece mai departe
-					case ERI:													break;	// afiseaza Eroare incadrare
-					case ERA:													break;	// afiseaza Eroare adresa
-					case TIP:													break;	// afiseaza Tip mesaj necunoscut
-					case OVR:													break;	// afiseaza Eroare suprapunere
-					case ESC:													break;	// afiseaza Eroare SC
-					case CAN:													break;	// afiseaza mesaj incomplet
+						case TMO: {
+										char errMsg[20] = "Timeout nod ";  // Base string
+										errMsg[12] = i;  // Append character
+										errMsg[13] = '\0'; // Null terminate
+										Error(errMsg);
+								    	break;
+									}
 
-					default:													break;	// afiseaza Eroare necunoscuta, apoi asteapta 1000ms
+					case ROK:													
+						if(retea[ADR_NOD].bufbin.tipmes==USER_MES)	 // a primit un mesaj de date, il afiseaza
+							  Afisare_mesaj();
+					break;												// a primit un mesaj de interogare, trece mai departe
+						
+																						
+					case ERI: Error("Eroare incadrare");						break;	// afiseaza Eroare incadrare
+					case ERA: Error("Eroare adresa");							break;	// afiseaza Eroare adresa
+					case TIP: Error("Tip mesaj necunoscut");					break;	// afiseaza Tip mesaj necunoscut
+					case OVR: Error("Eroare adresa");							break;	// afiseaza Eroare suprapunere
+					case ESC: Error("Eroare adresa");							break;	// afiseaza Eroare SC
+					case CAN: Error("Eroare adresa");							break;	// afiseaza mesaj incomplet
+
+					default:
+					Error("Eroare adresa");
+					Delay(1000);
+					break;	// afiseaza Eroare necunoscuta, apoi asteapta 1000ms
 				}
-																	// revine in starea 2 (a primit sau nu un raspuns de la slave, trece la urmatorul slave)
+				STARE_COM=2;													// revine in starea 2 (a primit sau nu un raspuns de la slave, trece la urmatorul slave)
 #endif
 
 			
