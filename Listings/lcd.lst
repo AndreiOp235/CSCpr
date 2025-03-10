@@ -1,4 +1,4 @@
-C51 COMPILER V8.02   LCD                                                                   03/10/2025 15:59:12 PAGE 1   
+C51 COMPILER V8.02   LCD                                                                   03/10/2025 16:24:58 PAGE 1   
 
 
 C51 COMPILER V8.02, COMPILATION OF MODULE LCD
@@ -62,7 +62,7 @@ line level    source
   52   1              LCD_PORT = 0xC0 | (cmd << 2) & 0xFC;
   53   1              LCD_EN = 1;
   54   1              LCD_EN = 0;
-C51 COMPILER V8.02   LCD                                                                   03/10/2025 15:59:12 PAGE 2   
+C51 COMPILER V8.02   LCD                                                                   03/10/2025 16:24:58 PAGE 2   
 
   55   1              Delay_ms (1);
   56   1      }
@@ -126,7 +126,7 @@ line level    source
  114   1              LCD_Cmd(HOME);
  115   1              Delay_ms (1);
  116   1              LCD_line = LCD_col =0;
-C51 COMPILER V8.02   LCD                                                                   03/10/2025 15:59:12 PAGE 3   
+C51 COMPILER V8.02   LCD                                                                   03/10/2025 16:24:58 PAGE 3   
 
  117   1      }
  118          
@@ -190,7 +190,7 @@ line level    source
  176          
  177          // afiseaza un cuvant de 16 biti in zecimal
  178          int LCD_PutWord(unsigned char line, unsigned char column, unsigned int word)
-C51 COMPILER V8.02   LCD                                                                   03/10/2025 15:59:12 PAGE 4   
+C51 COMPILER V8.02   LCD                                                                   03/10/2025 16:24:58 PAGE 4   
 
  179          {
  180   1              char i,str[5];
@@ -254,7 +254,7 @@ line level    source
  238          
  239          void Delay_ms(int ms){
  240   1              int i,j;
-C51 COMPILER V8.02   LCD                                                                   03/10/2025 15:59:12 PAGE 5   
+C51 COMPILER V8.02   LCD                                                                   03/10/2025 16:24:58 PAGE 5   
 
  241   1              for(i = ms; i > 0; i--)
  242   1                      for (j = COUNT_1MS; j > 0; j--);    // la 25 MHz, 1 ms = 25000 / SYSCLK

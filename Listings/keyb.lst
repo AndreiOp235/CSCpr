@@ -1,4 +1,4 @@
-C51 COMPILER V8.02   KEYB                                                                  03/10/2025 15:59:12 PAGE 1   
+C51 COMPILER V8.02   KEYB                                                                  03/10/2025 16:24:58 PAGE 1   
 
 
 C51 COMPILER V8.02, COMPILATION OF MODULE KEYB
@@ -62,7 +62,7 @@ line level    source
   52   4                                      if(key_released){                                               // daca inainte de detectare nu era nicio tasta apasata                 
   53   5                                              key_released = 0;                                               // acum este apasata o tasta
   54   5                                              switch(val){                                                    // decodifica tasta apasata si pune codul ASCII in key
-C51 COMPILER V8.02   KEYB                                                                  03/10/2025 15:59:12 PAGE 2   
+C51 COMPILER V8.02   KEYB                                                                  03/10/2025 16:24:58 PAGE 2   
 
   55   6                                                      case 0x88: key = 'D'; break;            // codul tastei apasate ferm corespunde tastei "D"
   56   6                                                      case 0x84: key = 'C'; break;            // ...................

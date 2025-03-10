@@ -58,6 +58,7 @@ void main (void) {
 
 				switch(RxMesaj(ADR_NOD)){			// asteapta un mesaj de la master
 					case TMO:							
+						
 														// anunta ca nodul curent devine master	???
 						TIP_NOD=MASTER;								// nodul curent devine master
 						Afisare_meniu();								// Afiseaza meniul de comenzi
@@ -66,7 +67,7 @@ void main (void) {
 								break;
 
 					case ROK:									
-						AfisareMesaj();
+						Afisare_mesaj();
 						break;	// a primit un mesaj de la master, il afiseaza
 					case POK:	
 						STARE_COM = 1; 					
@@ -117,79 +118,68 @@ void main (void) {
 
 #if(PROTOCOL == MS)										// nodul este slave, transmite mesaj catre master			
 																
-																		// cauta sa gaseasca un mesaj util de transmis
+																		// cauta sa gaseasca un mesaj util de transmis	 ????
 												
 																
 																
 															
 														
-																		// daca gaseste un nod i
-																			// adresa HW dest este ADR_MASTER
-																			// transmite mesajul pentru nodul i
-																
+				if(found)												 	// daca gaseste un nod i
+				{
+				retea[i].bufbin.adresa_hw_dest=ADR_MASTER;					// adresa HW dest este ADR_MASTER
+				TxMesaj(i);											// transmite mesajul pentru nodul i				
+				}													
+				else
+				{
 																		// daca nu gaseste, construieste un mesaj in bufferul ADR_MASTER
-																			// adresa HW dest este ADR_MASTER
-																			// adresa HW src este ADR_NOD
-																			// tip mesaj = POLL_MES
-																			// transmite mesajul din bufferul ADR_MASTER
+					retea[ADR_MASTER].bufbin.adresa_hw_dest=ADR_MASTER;			// adresa HW dest este ADR_MASTER
+					retea[ADR_MASTER].bufbin.adresa_hw_src=ADR_NOD;				// adresa HW src este ADR_NOD
+					retea[ADR_MASTER].bufbin.tipmes= POLL_MES;						// tip mesaj = POLL_MES
+					TxMesaj(ADR_MASTER);									// transmite mesajul din bufferul ADR_MASTER
+				}
+																
+																		
 															
-																// trece in starea 0, sa astepte un nou mesaj de la master
+					STARE_COM=0;											// trece in starea 0, sa astepte un nou mesaj de la master
 				break;
 #endif
 
 #if(PROTOCOL == JT)							// nodul detine jetonul, poate transmite un mesaj USER_MES				
-				
-				
-																			// cauta sa gaseasca un mesaj util de transmis
-	
 
-
-
-
-																					// daca gaseste un mesaj de transmis catre nodul i
-																						// adresa HW dest este dest
-																						// transmite mesajul catre nodul i
 																						// asteapta procesarea mesajului la destinatie (WAIT/2 msec)
-
-																		// va incerca sa transmita jetonul nodului urmator 
-																		// trece in starea 2, sa transmita jetonul urmatorului nod
 #endif	
 				
 			break;	
 				
-			case 2:											// tratare stare 2 si comutare stare
+			case 2:
+															// tratare stare 2 si comutare stare
 
 #if(PROTOCOL == MS)											// nodul este master, tratare stare 2 si comutare stare
-															
-																	// selecteaza urmatorul slave (incrementeaza i si sare peste adresa proprie)
+				if(++i==ADR_NOD)						   // selecteaza urmatorul slave (incrementeaza i si sare peste adresa proprie)
+					i++;
+				else if(i>NR_NODURI)
+					i=0;																
 																	
-														
-														
-	
-																	// adresa HW dest este i
-																	// daca in bufferul i se afla un mesaj util, il transmite
-																	// altfel, construieste un mesaj de interogare in bufferul i
-																	// adresa HW src este ADR_NOD
-																	// tip mesaj = POLL_MES
-																	// transmite mesajul din bufferul i
-															
-																// trece in starea 3, sa astepte raspunsul de la slave-ul i
+
+				retea[ADR_NOD].bufbin.adresa_hw_dest=i;													// adresa HW dest este i
+				if(1)
+				{
+																  // daca in bufferul i se afla un mesaj util, il transmite	 ????
+				}
+				else
+				{
+																  // altfel, construieste un mesaj de interogare in bufferul i
+					retea[ADR_NOD].bufbin.adresa_hw_src=ADR_NOD;			// adresa HW src este ADR_NOD
+					retea[ADR_NOD].bufbin.tipmes=POLL_MES;					// tip mesaj = POLL_MES
+					TxMesaj(i);										// transmite mesajul din bufferul i
+				}													
+																	
+				STARE_COM=3;										// trece in starea 3, sa astepte raspunsul de la slave-ul i
 
 #endif
 
 #if(PROTOCOL == JT)											// nodul transmite jetonul urmatorului nod 		
-				
-																				// selecteaza urmatorul slave (incrementeaza i si sare peste adresa proprie)
-					
-	
-	
-	
 																				// asteapta WAIT/2 sec
-				
-																				// adresa HW dest este i
-																				// adresa HW src este ADR_NOD
-																				// tip mesaj = JET_MES
-																				// transmite mesajul din bufferul i
 																				// trece in starea 3, sa astepte confirmarea de la nodul i ca jetonul a fost primit
 #endif
 

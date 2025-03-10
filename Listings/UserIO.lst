@@ -1,4 +1,4 @@
-C51 COMPILER V8.02   USERIO                                                                03/10/2025 15:59:14 PAGE 1   
+C51 COMPILER V8.02   USERIO                                                                03/10/2025 16:25:00 PAGE 1   
 
 
 C51 COMPILER V8.02, COMPILATION OF MODULE USERIO
@@ -62,7 +62,7 @@ line level    source
   50   3                                                      break;
   51   3                                                                              
   52   3                              case 1:                                                                                                 // s-a selectat nodul                                                           
-C51 COMPILER V8.02   USERIO                                                                03/10/2025 15:59:14 PAGE 2   
+C51 COMPILER V8.02   USERIO                                                                03/10/2025 16:25:00 PAGE 2   
 
   53   3                                                                                                                                                              
   54   3                                                                                                                                                              // daca adresa este intre '0' - '2', mai putin adresa proprie
@@ -126,7 +126,7 @@ line level    source
 *** WARNING C280 IN LINE 26 OF USERIO.C: 'lng': unreferenced local variable
  109          
  110          //********************************************************************************************************
-C51 COMPILER V8.02   USERIO                                                                03/10/2025 15:59:14 PAGE 3   
+C51 COMPILER V8.02   USERIO                                                                03/10/2025 16:25:00 PAGE 3   
 
              -***
  111          void Afisare_meniu(void){                                                       // afisare meniu initial
@@ -190,7 +190,7 @@ line level    source
  167   2                      for(j = 0, ptr = retea[ADR_NOD].bufbin.date; j < lng; j++) LCD_Putch(*ptr++);           // afiseaza mesajul, cara
              -cter cu caracter
  168   2      
-C51 COMPILER V8.02   USERIO                                                                03/10/2025 15:59:14 PAGE 4   
+C51 COMPILER V8.02   USERIO                                                                03/10/2025 16:25:00 PAGE 4   
 
  169   2                      retea[ADR_NOD].full = 0;                                        // mesajul a fost afisat, marcheaza buffer gol
  170   2              }

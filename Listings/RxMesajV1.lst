@@ -1,4 +1,4 @@
-C51 COMPILER V8.02   RXMESAJV1                                                             03/10/2025 15:59:13 PAGE 1   
+C51 COMPILER V8.02   RXMESAJV1                                                             03/10/2025 16:25:00 PAGE 1   
 
 
 C51 COMPILER V8.02, COMPILATION OF MODULE RXMESAJV1
@@ -62,7 +62,7 @@ line level    source
   50   1                                                                                                                                      // S: timeout, terminare receptie, nodul va deveni master
   51   1                                                                                                                                              // sau va anunta ca s-a pierdut jetonul si va regenera jetonul
   52   1                                                                                                                                      
-C51 COMPILER V8.02   RXMESAJV1                                                             03/10/2025 15:59:13 PAGE 2   
+C51 COMPILER V8.02   RXMESAJV1                                                             03/10/2025 16:25:00 PAGE 2   
 
   53   1                                                                                                                              // S: asteapta sincronizarea cu inceputul mesajului
   54   1                              
@@ -126,7 +126,7 @@ line level    source
  112   1                                                                                                                                                                      
  113   1                                                                                                                                              // M: ia in calcul in screc octetul de date
  114   1                                                                                                                                                                      
-C51 COMPILER V8.02   RXMESAJV1                                                             03/10/2025 15:59:13 PAGE 3   
+C51 COMPILER V8.02   RXMESAJV1                                                             03/10/2025 16:25:00 PAGE 3   
 
  115   1                                                                                                                                                      
  116   1                                                                                                                                              // M: determina suma de control
@@ -190,7 +190,7 @@ line level    source
  161   1              if(*ptr > '9') bin  += (*ptr++ - 'A' + 10);                     // contributia celui de-al doilea caracter daca este litera
  162   1              else bin += (*ptr++ - '0');                                                     // contributia celui de-al doilea caracter daca este cifra
  163   1              return bin;
-C51 COMPILER V8.02   RXMESAJV1                                                             03/10/2025 15:59:13 PAGE 4   
+C51 COMPILER V8.02   RXMESAJV1                                                             03/10/2025 16:25:00 PAGE 4   
 
  164   1      }
  165          
