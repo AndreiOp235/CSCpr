@@ -23,13 +23,13 @@ extern nod retea[];
 
 //***********************************************************************************************************
 void UserIO(void){					// interfata cu utilizatorul
-	static unsigned char tasta, cmd, dest, lng;	// variabile locale statice
+	static unsigned char tasta, dest, lng;	// variabile locale statice
 	
 	if(0 == (tasta = TERM_Input())){
 		tasta = KEYB_Input();
 		if(tasta) LCD_Putch(tasta);
 	}
-	if(tasta){
+	if(tasta){										// periodic verifica daca s-a apasat o tasta
 		
 		switch(STARE_IO){
 			
@@ -37,25 +37,23 @@ void UserIO(void){					// interfata cu utilizatorul
 				
 							case '1': 											// s-a dat comanda de transmisie mesaj								
 																							// afiseaza Tx Msg:> Nod = 
-																							// blocheaza afisarea (AFISARE = 0)
+																							// blocheaza afisarea mesajelor din task-ul de comunicatie (AFISARE = 0)
 																							// trece in starea 1
-																							// comanda este '1'
 									break;
 							
 							case '2': 											// s-a dat comanda de afisare Stare Nod:
 								
-																							// blocheaza afisarea (AFISARE = 0)
-																							// trece in starea 1
-																							// comanda este '2'
+																							// blocheaza afisarea mesajelor din task-ul de comunicatie (AFISARE = 0)
+																							// trece in starea 2
 							default: break;
 						}
 						break;
 									
 			case 1:													// s-a selectat nodul								
 																			
-																			// daca comanda e '1' si adresa e intre '0' - '4', mai putin adresa proprie
+																			// daca adresa este intre '0' - '2', mai putin adresa proprie
 																				// extrage dest din tasta
-																				// Daca este deja un mesaj in buffer ...
+																			// Daca este deja un mesaj in buffer ...
 																				// afiseaza Buffer plin
 			
 																				// trece in starea 0, s-a terminat tratarea comenzii '1'
@@ -73,10 +71,15 @@ void UserIO(void){					// interfata cu utilizatorul
 																				// cere introducerea mesajului
 			
 																				// initializeaza lng = 0 
-																				// trece in starea 2, sa astepte caracterele mesajului
+																				// trece in starea 3, sa astepte caracterele mesajului
 																	
 																
-																		// daca comanda e '2' si adresa e intre '0'-'4'
+						break;
+		
+
+			case 2:													// s-a selectat nodul								
+																			
+																		// daca adresa e intre '0'-'2'
 																			// extrage dest din tasta
 																			// Daca este deja un mesaj in buffer ...
 																				// Afiseaza Buffer plin
@@ -87,10 +90,11 @@ void UserIO(void){					// interfata cu utilizatorul
 																			// trece in starea 0, s-a terminat tratarea comenzii
 																			// afisare meniu
 						break;
-		
-			case 2:													// daca tasta e diferita de CR ('\r'), de NL ('\n') si de '*' si nu s-a ajuns la limita maxima a bufferului de caractere
+
+
+			case 3:														// daca tasta e diferita de CR ('\r'), de NL ('\n') si de '*' si nu s-a ajuns la limita maxima a bufferului de caractere
 																			// stocheaza codul tastei apasate in bufferul de date si incrementeaza lng
-																		// daca s-a atins nr maxim de caractere sau s-a apasat Enter ('\r') sau ('\n') sau '*'
+																		// altfel (daca s-a atins nr maxim de caractere sau s-a apasat Enter ('\r') sau ('\n') sau '*')
 																			// stocheaza lng
 																			// pune in bufbin tipul mesajului (USER_MES)
 																			// marcheaza buffer plin

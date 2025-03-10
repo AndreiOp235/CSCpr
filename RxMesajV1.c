@@ -3,15 +3,15 @@
 #include <Protocol.h>
 #include <UserIO.h>
 
-extern nod retea[];						// reteaua Master-Slave, cu 5 noduri
+extern nod retea[];						// reteaua Master-Slave, cu 3 noduri
 
 extern unsigned char TIP_NOD;			// tip nod
-extern unsigned char ADR_MASTER;	// adresa nodului master
+extern unsigned char ADR_MASTER;		// adresa nodului master
 
-extern unsigned char timeout;		// variabila globala care indica expirare timp de asteptare eveniment
+extern unsigned char timeout;			// variabila globala care indica expirare timp de asteptare eveniment
 //***********************************************************************************************************
 unsigned char RxMesaj(unsigned char i);				// primire mesaj de la nodul i
-unsigned char ascii2bin(unsigned char *ptr);			// functie de conversie 2 caractere ASCII HEX in binar
+unsigned char ascii2bin(unsigned char *ptr);		// functie de conversie 2 caractere ASCII HEX in binar
 
 //***********************************************************************************************************
 unsigned char RxMesaj(unsigned char i){					// receptie mesaj															   
@@ -43,12 +43,12 @@ unsigned char RxMesaj(unsigned char i){					// receptie mesaj
 															
 															
 															
-															// Daca nodul este slave sau daca nu are jetonul ...
+															// altfel (Daca nodul este slave sau daca nu are jetonul ...)
 															
-																// S: asteapta cu timeout primirea primului caracter al unui mesaj (de la master sau de la cel care are jetonul)
-																// (sau de la nodul care detine jetonul)
+																// S: asteapta cu timeout primirea primului caracter al unui mesaj de la master
+																	// (sau de la nodul care detine jetonul)
 																// S: timeout, terminare receptie, nodul va deveni master
-																// sau va anunta ca s-a pierdut jetonul si va regenera jetonul
+																	// sau va anunta ca s-a pierdut jetonul si va regenera jetonul
 																
 															// S: asteapta sincronizarea cu inceputul mesajului
 			
@@ -85,69 +85,70 @@ unsigned char RxMesaj(unsigned char i){					// receptie mesaj
   															// M+S: ia in calcul in screc codul functiei
 
 															// M+S: Daca mesajul este USER_MES
-															// M+S: determina sursa mesajului
+																// M+S: determina sursa mesajului
 																
-															// M+S: ia in calcul in screc adresa src
+																// M+S: ia in calcul in screc adresa src
 		
-															// M+S: determina destinatia mesajului
+																// M+S: determina destinatia mesajului
 																
-															// M+S: ia in calcul in screc adresa dest
+																// M+S: ia in calcul in screc adresa dest
 		
-															// Daca nodul este master...
-															// M: bufferul destinatie este deja plin, terminare receptie
+																// Daca nodul este master...
+																	// M: bufferul destinatie este deja plin, terminare receptie
 
-															// M+S: determina lng
+																// M+S: determina lng
 																	
-															// M+S: ia in calcul in screc lungimea datelor
+																// M+S: ia in calcul in screc lungimea datelor
 		
-															// Daca nodul este master...
-																// M: stocheaza in bufbin adresa HW src	egala cu ADR_NOD
-																// M: stocheaza in bufbin tipul mesajului	
-																// M: stocheaza in bufbin adresa nodului sursa al mesajului	
-																// M: stocheaza in bufbin adresa nodului destinatie al mesajului	
-																// M: stocheaza lng
+																// Daca nodul este master...
+																	// M: stocheaza in bufbin adresa HW src	egala cu ADR_NOD
+																	// M: stocheaza in bufbin tipul mesajului	
+																	// M: stocheaza in bufbin adresa nodului sursa al mesajului	
+																	// M: stocheaza in bufbin adresa nodului destinatie al mesajului	
+																	// M: stocheaza lng
 				
 																			
-																// M: determina un octet de date
+																	// M: determina un octet de date
 																				
-																// M: ia in calcul in screc octetul de date
+																	// M: ia in calcul in screc octetul de date
 																				
 																		
-																// M: determina suma de control
+																	// M: determina suma de control
 																		
-																// M: pune sc in bufbin
+																	// M: pune sc in bufbin
 																			
-																// M: mesaj corect, marcare buffer plin
+																	// M: mesaj corect, marcare buffer plin
 																				
 																		
-																// M: eroare SC, terminare receptie
+																	// M: eroare SC, terminare receptie
 																	
-															// Daca nodul este slave ...
-															// S: stocheaza la destsrc codul nodului sursa al mesajului	
-															// S: stocheaza lng
-																	
-															// S: determina un octet de date
+																// altfel (Daca nodul este slave ...)
+																	// S: stocheaza la destsrc codul nodului sursa al mesajului	
+																	// S: stocheaza lng
 																		
-															// S: ia in calcul in screc octetul de date
+																	// S: determina un octet de date
+																		
+																	// S: ia in calcul in screc octetul de date
 																	
 															
-															// S: determina suma de control
+																	// S: determina suma de control
 																		
-																		
-															// S: mesaj corect, marcare buffer plin
+																	// daca sc este corecta	
+																		// S: mesaj corect, marcare buffer plin
 																
-																	
-															// S: eroare SC, terminare receptie
+																	// altfel ...
+																		// S: eroare SC, terminare receptie
 															
 																
-														// daca mesajul este POLL_MES sau JET_MES
-															// memoreaza adresa hw src pentru a sti de la cine a primit jetonul
-															// M+S: determina suma de control
-															
-															// M+S: returneaza POK sau JOK, au aceeasi valoare	
-															// M+S: eroare SC, terminare receptie
+															// daca mesajul este POLL_MES sau JET_MES
+																// memoreaza adresa hw src pentru a sti de la cine a primit jetonul
+																// M+S: determina suma de control
+																// daca sc este corecta 
+																	// M+S: returneaza POK sau JOK, au aceeasi valoare
+																// altfel...
+																// M+S: eroare SC, terminare receptie
 																
-		return TMO;			// simuleaza asteptarea mesajului si iesirea cu timeout
+		return TMO;			// simuleaza asteptarea mesajului si iesirea cu timeout când nu este implementata functia
 }															
 
 
@@ -155,10 +156,10 @@ unsigned char RxMesaj(unsigned char i){					// receptie mesaj
 unsigned char ascii2bin(unsigned char *ptr){			// converteste doua caractere ASCII HEX de la adresa ptr
 	unsigned char bin;
 	
-	if(*ptr > '9') bin = (*ptr++ - 'A' + 10) << 4;	// contributia primului caracter daca este litera
-	else bin = (*ptr++ - '0') << 4;									// contributia primului caracter daca este cifra
+	if(*ptr > '9') bin = (*ptr++ - 'A' + 10) << 4;		// contributia primului caracter daca este litera
+	else bin = (*ptr++ - '0') << 4;						// contributia primului caracter daca este cifra
 	if(*ptr > '9') bin  += (*ptr++ - 'A' + 10);			// contributia celui de-al doilea caracter daca este litera
-	else bin += (*ptr++ - '0');											// contributia celui de-al doilea caracter daca este cifra
+	else bin += (*ptr++ - '0');							// contributia celui de-al doilea caracter daca este cifra
 	return bin;
 }
 

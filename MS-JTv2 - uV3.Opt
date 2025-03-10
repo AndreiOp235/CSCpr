@@ -10,7 +10,7 @@
  CppX (*.cpp)
  DaveTm { 0,0,0,0,0,0,0,0 }
 
-Target (MSv1 - uV3), 0x0000 // Tools: 'MCS-51'
+Target (MSv2 - uV3), 0x0000 // Tools: 'MCS-51'
 GRPOPT 1,(Drivers),1,0,0
 GRPOPT 2,(Application),1,0,0
 
@@ -22,13 +22,13 @@ OPTFFF 1,5,1,0,0,0,0,0,<.\BIG8051\Drivers\osc.c><osc.c>
 OPTFFF 1,6,1,0,0,0,0,0,<.\BIG8051\Drivers\port.c><port.c> 
 OPTFFF 1,7,1,0,0,0,0,0,<.\BIG8051\Drivers\uart0.c><uart0.c> 
 OPTFFF 1,8,1,0,0,0,0,0,<.\BIG8051\Drivers\wdt.c><wdt.c> 
-OPTFFF 2,9,1,2,0,212,212,0,<.\MS-JT.c><MS-JT.c> { 44,0,0,0,2,0,0,0,3,0,0,0,255,255,255,255,255,255,255,255,248,255,255,255,225,255,255,255,0,0,0,0,0,0,0,0,158,4,0,0,99,1,0,0 }
-OPTFFF 2,10,1,0,0,0,0,0,<.\TxMesajV1.c><TxMesajV1.c> 
-OPTFFF 2,11,1,0,0,0,0,0,<.\RxMesajV1.c><RxMesajV1.c> 
+OPTFFF 2,9,1,2,0,1,1,0,<.\MS-JT.c><MS-JT.c> { 44,0,0,0,2,0,0,0,3,0,0,0,255,255,255,255,255,255,255,255,248,255,255,255,225,255,255,255,0,0,0,0,0,0,0,0,158,4,0,0,99,1,0,0 }
+OPTFFF 2,10,1,0,0,0,0,0,<.\TxMesajV2.c><TxMesajV2.c> 
+OPTFFF 2,11,1,0,0,0,0,0,<.\RxMesajV2.c><RxMesajV2.c> 
 OPTFFF 2,12,1,0,0,0,0,0,<.\UserIO.c><UserIO.c> 
 
 
-TARGOPT 1, (MSv1 - uV3)
+TARGOPT 1, (MSv2 - uV3)
  CLK51=25000000
   OPTTT 0,1,1,0
   OPTHX 0,65535,0,0,0

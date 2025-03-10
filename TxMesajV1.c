@@ -16,10 +16,10 @@ void bin2ascii(unsigned char ch, unsigned char *ptr);	// functie de conversie oc
 void TxMesaj(unsigned char i){					// transmite mesajul din buffer-ul i
 	unsigned char sc, *ptr, j;
 
-																								// daca este un mesaj de interogare (POLL_MES) sau JET_MES (au aceeasi valoare)
+																							// daca este un mesaj de interogare (POLL_MES) sau JET_MES (au aceeasi valoare)
 																								// calculeaza direct sc
 
-																								// altfel...
+																							// altfel...
 																								// initializeaza SC	cu adresa HW a nodului destinatie
 																								// ia in calcul adresa_hw_src
 																								// ia in calcul tipul mesajului
@@ -30,14 +30,14 @@ void TxMesaj(unsigned char i){					// transmite mesajul din buffer-ul i
 																								// ia in calcul datele
 																								// stocheaza suma de control
 
-																								// initializare pointer pe bufferul ASCII
-																								// pune in bufasc adresa HW dest in ASCII HEX
+																							// initializare pointer pe bufferul ASCII
+																							// pune in bufasc adresa HW dest in ASCII HEX
 																								
-																								// pune in bufasc adresa HW src in ASCII HEX
+																							// pune in bufasc adresa HW src in ASCII HEX
 																								
-																								// pune in bufasc tipul mesajului
+																							// pune in bufasc tipul mesajului
 																								
-																								// daca este un mesaj de date (USER_MES)
+																							// daca este un mesaj de date (USER_MES)
 																								// pune in bufasc src
 																									
 																								// pune in bufasc dest
@@ -49,17 +49,17 @@ void TxMesaj(unsigned char i){					// transmite mesajul din buffer-ul i
 																								
 																									
 																								
-																								// pune in bufasc SC
+																							// pune in bufasc SC
 																								
-																								// pune in bufasc CR
-																								// pune in bufasc LF
+																							// pune in bufasc CR
+																							// pune in bufasc LF
 	
-																								// reinitializare pointer
-																								// transmite primul caracter al mesajului (':')
-																								// transmite restul caracterelor din bufferul ASCII
+																							// reinitializare pointer
+																							// transmite primul caracter al mesajului (':')
+																							// transmite restul caracterelor din bufferul ASCII
 																								
 	
-																								// masterul nu goleste buffer-ul
+																							// masterul nu goleste buffer-ul
 
 }
 
