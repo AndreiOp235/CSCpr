@@ -15,52 +15,69 @@ void bin2ascii(unsigned char ch, unsigned char *ptr);	// functie de conversie oc
 //***********************************************************************************************************
 void TxMesaj(unsigned char i){					// transmite mesajul din buffer-ul i
 	unsigned char sc, *ptr, j;
-
-																							// daca este un mesaj de interogare (POLL_MES) sau JET_MES (au aceeasi valoare)
-																								// calculeaza direct sc
-
-																							// altfel...
-																								// initializeaza SC	cu adresa HW a nodului destinatie
-																								// ia in calcul adresa_hw_src
-																								// ia in calcul tipul mesajului
-																								// ia in calcul adresa nodului sursa al mesajului
-																								// ia in calcul adresa nodului destinatie al mesajului
-																								// ia in calcul lungimea datelor
-
-																								// ia in calcul datele
-																								// stocheaza suma de control
-
-																							// initializare pointer pe bufferul ASCII
-																							// pune in bufasc adresa HW dest in ASCII HEX
-																								
-																							// pune in bufasc adresa HW src in ASCII HEX
-																								
-																							// pune in bufasc tipul mesajului
-																								
-																							// daca este un mesaj de date (USER_MES)
-																								// pune in bufasc src
-																									
-																								// pune in bufasc dest
-																								
-																								// pune in bufasc lng date
-																								
-																								
-																								// pune in bufasc datele
-																								
-																									
-																								
-																							// pune in bufasc SC
-																								
-																							// pune in bufasc CR
-																							// pune in bufasc LF
 	
-																							// reinitializare pointer
-																							// transmite primul caracter al mesajului (':')
-																							// transmite restul caracterelor din bufferul ASCII
-																								
-	
-																							// masterul nu goleste buffer-ul
+	if(retea[i].bufbin.tipmes == POLL_MES)
+	{
+		sc = retea[i].bufbin.adresa_hw_dest;
+		sc += retea[i].bufbin.adresa_hw_src;
+		retea[i].bufbin.sc = sc;
+	}
+	else
+	{
+		sc = retea[i].bufbin.adresa_hw_dest;
+		sc += retea[i].bufbin.adresa_hw_src;
+		sc += retea[i].bufbin.tipmes;
+		sc += retea[i].bufbin.src;
+		sc += retea[i].bufbin.dest;
+		sc += retea[i].bufbin.lng;
+		
+		for(j = 0; j < retea[i].bufbin.lng; ++j) 
+		{
+			sc += retea[i].bufbin.date[j];
+		}
+		
+		retea[i].bufbin.sc = sc;
+	}																			
 
+	ptr = retea[i].bufasc + 1;															
+	
+	bin2ascii(retea[i].bufbin.adresa_hw_dest, ptr);											
+	ptr += 2;
+																							
+	bin2ascii(retea[i].bufbin.adresa_hw_src, ptr);											
+	ptr += 2;
+																								
+	bin2ascii(retea[i].bufbin.tipmes, ptr); 											
+	ptr += 2;
+																								
+	if(retea[i].bufbin.tipmes == USER_MES)
+	{
+		bin2ascii(retea[i].bufbin.src, ptr);
+		ptr += 2;
+		
+		bin2ascii(retea[i].bufbin.dest, ptr);
+		ptr += 2;
+		
+		bin2ascii(retea[i].bufbin.lng, ptr);
+		ptr += 2;
+		
+		bin2ascii(retea[i].bufbin.date[NR_CHAR_MAX], ptr);
+		ptr += 2;
+	}		
+			
+	bin2ascii(retea[i].bufbin.sc, ptr);
+	ptr += 2;
+	
+	*ptr++ = 0x0D;
+	*ptr++ = 0x0A;
+	
+	ptr = retea[i].bufasc;
+	
+	while (*ptr) 
+	{
+    UART1_PutchPE(*ptr);
+    ptr++;
+	}
 }
 
 //***********************************************************************************************************

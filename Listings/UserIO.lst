@@ -1,14 +1,14 @@
-C51 COMPILER V8.02   USERIO                                                                03/10/2025 17:13:24 PAGE 1   
+C51 COMPILER V9.59.0.0   USERIO                                                            03/16/2025 13:20:03 PAGE 1   
 
 
-C51 COMPILER V8.02, COMPILATION OF MODULE USERIO
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE USERIO
 OBJECT MODULE PLACED IN .\Objects\UserIO.obj
-COMPILER INVOKED BY: D:\Apps\Keil\C51\BIN\C51.EXE UserIO.c LARGE BROWSE INCDIR(.\BIG8051\Include) DEBUG OBJECTEXTEND PRI
-                    -NT(.\Listings\UserIO.lst) OBJECT(.\Objects\UserIO.obj)
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE UserIO.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(.\BIG8051\Include) DEBUG 
+                    -OBJECTEXTEND PRINT(.\Listings\UserIO.lst) TABS(2) OBJECT(.\Objects\UserIO.obj)
 
 line level    source
 
-   1          #include <c8051F040.h>                                          // declaratii SFR
+   1          #include <c8051F040.h>            // declaratii SFR
    2          #include <osc.h>
    3          #include <Protocol.h>
    4          #include <uart0.h>
@@ -16,9 +16,9 @@ line level    source
    6          #include <keyb.h>
    7          #include <UserIO.h>
    8          
-   9          void Afisare_meniu(void);                                       // afisare meniu initial
-  10          void Afisare_mesaj(void);                                       // afisare mesaj receptionat
-  11          void Error(char *ptr);                                          // afisare mesaj de eroare
+   9          void Afisare_meniu(void);         // afisare meniu initial
+  10          void Afisare_mesaj(void);         // afisare mesaj receptionat
+  11          void Error(char *ptr);            // afisare mesaj de eroare
   12          
   13          unsigned char TERM_Input(void);
   14          unsigned char AFISARE = 1;
@@ -34,195 +34,195 @@ line level    source
   23          
   24          //********************************************************************************************************
              -***
-  25          void UserIO(void){                                      // interfata cu utilizatorul
-  26   1              static unsigned char tasta, dest, lng;  // variabile locale statice
-  27   1              
-  28   1              if(0 == (tasta = TERM_Input())){
-  29   2                      tasta = KEYB_Input();
-  30   2                      if(tasta) LCD_Putch(tasta);
-  31   2              }
-  32   1              if(tasta){                                                                              // periodic verifica daca s-a apasat o tasta
-  33   2                      
-  34   2                      switch(STARE_IO){
-  35   3                              
-  36   3                              case 0: switch(tasta){                                                                  
-  37   4                                      
-  38   4                                                              case '1':                                                                                       // s-a dat comanda de transmisie mesaj                                                          
-  39   4                                                                                                                                                                                              // afiseaza Tx Msg:> Nod = 
-  40   4                                                                                                                                                                                              // blocheaza afisarea mesajelor din task-ul de comunicatie (AFISARE = 0)
-  41   4                                                                                                                                                                                              // trece in starea 1
-  42   4                                                                              break;
-  43   4                                                              
-  44   4                                                              case '2':                                                                                       // s-a dat comanda de afisare Stare Nod:
-  45   4                                                                      
-  46   4                                                                                                                                                                                              // blocheaza afisarea mesajelor din task-ul de comunicatie (AFISARE = 0)
-  47   4                                                                                                                                                                                              // trece in starea 2
-  48   4                                                              default: break;
-  49   4                                                      }
-  50   3                                                      break;
-  51   3                                                                              
-  52   3                              case 1:                                                                                                 // s-a selectat nodul                                                           
-C51 COMPILER V8.02   USERIO                                                                03/10/2025 17:13:24 PAGE 2   
+  25          void UserIO(void){          // interfata cu utilizatorul
+  26   1        static unsigned char tasta, dest, lng;  // variabile locale statice
+  27   1        
+  28   1        if(0 == (tasta = TERM_Input())){
+  29   2          tasta = KEYB_Input();
+  30   2          if(tasta) LCD_Putch(tasta);
+  31   2        }
+  32   1        if(tasta){                    // periodic verifica daca s-a apasat o tasta
+  33   2          
+  34   2          switch(STARE_IO){
+  35   3            
+  36   3            case 0: switch(tasta){                  
+  37   4              
+  38   4                    case '1':                       // s-a dat comanda de transmisie mesaj                
+  39   4                                                    // afiseaza Tx Msg:> Nod = 
+  40   4                                                    // blocheaza afisarea mesajelor din task-ul de comunicatie (AFISARE = 0)
+  41   4                                                    // trece in starea 1
+  42   4                        break;
+  43   4                    
+  44   4                    case '2':                       // s-a dat comanda de afisare Stare Nod:
+  45   4                      
+  46   4                                                    // blocheaza afisarea mesajelor din task-ul de comunicatie (AFISARE = 0)
+  47   4                                                    // trece in starea 2
+  48   4                    default: break;
+  49   4                  }
+  50   3                  break;
+  51   3                        
+  52   3            case 1:                         // s-a selectat nodul               
+C51 COMPILER V9.59.0.0   USERIO                                                            03/16/2025 13:20:03 PAGE 2   
 
-  53   3                                                                                                                                                              
-  54   3                                                                                                                                                              // daca adresa este intre '0' - '2', mai putin adresa proprie
-  55   3                                                                                                                                                                      // extrage dest din tasta
-  56   3                                                                                                                                                              // Daca este deja un mesaj in buffer ...
-  57   3                                                                                                                                                                      // afiseaza Buffer plin
-  58   3                              
-  59   3                                                                                                                                                                      // trece in starea 0, s-a terminat tratarea comenzii '1'
-  60   3                                                                                                                                                                      // afisare meniu
-  61   3                                                                                                                                                                              
-  62   3                                                                                                                                                              // altfel ...
-  63   3                                                                                                                                                                      // daca nodul e master
-  64   3                                                                                                                                                                              // pune in bufferul dest adresa hw dest egala cu dest
-  65   3                                                                                                                                                                      // altfel ...
-  66   3                                                                                                                                                                              // pune in bufferul dest adresa hw dest egala cu ADR_MASTER
-  67   3                                                                      
-  68   3                                                                                                                                                                      // pune in bufferul dest adresa hw sursa  egala cu ADR_NOD
-  69   3                                                                                                                                                                      // pune in bufferul dest adresa nodului sursa ADR_NOD
-  70   3                                                                                                                                                                      // pune in bufferul dest adresa nodului destinatie (dest)
-  71   3                                                                                                                                                                      // cere introducerea mesajului
-  72   3                              
-  73   3                                                                                                                                                                      // initializeaza lng = 0 
-  74   3                                                                                                                                                                      // trece in starea 3, sa astepte caracterele mesajului
-  75   3                                                                                                                                              
-  76   3                                                                                                                                      
-  77   3                                                      break;
-  78   3                      
+  53   3                                            
+  54   3                                            // daca adresa este intre '0' - '2', mai putin adresa proprie
+  55   3                                              // extrage dest din tasta
+  56   3                                            // Daca este deja un mesaj in buffer ...
+  57   3                                              // afiseaza Buffer plin
+  58   3            
+  59   3                                              // trece in starea 0, s-a terminat tratarea comenzii '1'
+  60   3                                              // afisare meniu
+  61   3                                                
+  62   3                                            // altfel ...
+  63   3                                              // daca nodul e master
+  64   3                                                // pune in bufferul dest adresa hw dest egala cu dest
+  65   3                                              // altfel ...
+  66   3                                                // pune in bufferul dest adresa hw dest egala cu ADR_MASTER
+  67   3                      
+  68   3                                              // pune in bufferul dest adresa hw sursa  egala cu ADR_NOD
+  69   3                                              // pune in bufferul dest adresa nodului sursa ADR_NOD
+  70   3                                              // pune in bufferul dest adresa nodului destinatie (dest)
+  71   3                                              // cere introducerea mesajului
+  72   3            
+  73   3                                              // initializeaza lng = 0 
+  74   3                                              // trece in starea 3, sa astepte caracterele mesajului
+  75   3                                        
+  76   3                                      
+  77   3                  break;
+  78   3          
   79   3      
-  80   3                              case 2:                                                                                                 // s-a selectat nodul                                                           
-  81   3                                                                                                                                                              
-  82   3                                                                                                                                                      // daca adresa e intre '0'-'2'
-  83   3                                                                                                                                                              // extrage dest din tasta
-  84   3                                                                                                                                                              // Daca este deja un mesaj in buffer ...
-  85   3                                                                                                                                                                      // Afiseaza Buffer plin
-  86   3                                                                                                                                                                      
-  87   3                                                                                                                                                              // altfel
-  88   3                                                                                                                                                                      // Afiseaza Buffer gol
-  89   3                                                                                                                                                                      
-  90   3                                                                                                                                                              // trece in starea 0, s-a terminat tratarea comenzii
-  91   3                                                                                                                                                              // afisare meniu
-  92   3                                                      break;
+  80   3            case 2:                         // s-a selectat nodul               
+  81   3                                            
+  82   3                                          // daca adresa e intre '0'-'2'
+  83   3                                            // extrage dest din tasta
+  84   3                                            // Daca este deja un mesaj in buffer ...
+  85   3                                              // Afiseaza Buffer plin
+  86   3                                              
+  87   3                                            // altfel
+  88   3                                              // Afiseaza Buffer gol
+  89   3                                              
+  90   3                                            // trece in starea 0, s-a terminat tratarea comenzii
+  91   3                                            // afisare meniu
+  92   3                  break;
   93   3      
   94   3      
-  95   3                              case 3:                                                                                                         // daca tasta e diferita de CR ('\r'), de NL ('\n') si de '*' si nu s-a ajuns la l
+  95   3            case 3:                           // daca tasta e diferita de CR ('\r'), de NL ('\n') si de '*' si nu s-a ajuns la l
              -imita maxima a bufferului de caractere
-  96   3                                                                                                                                                              // stocheaza codul tastei apasate in bufferul de date si incrementeaza lng
-  97   3                                                                                                                                                      // altfel (daca s-a atins nr maxim de caractere sau s-a apasat Enter ('\r') sau ('\n') s
+  96   3                                            // stocheaza codul tastei apasate in bufferul de date si incrementeaza lng
+  97   3                                          // altfel (daca s-a atins nr maxim de caractere sau s-a apasat Enter ('\r') sau ('\n') s
              -au '*')
-  98   3                                                                                                                                                              // stocheaza lng
-  99   3                                                                                                                                                              // pune in bufbin tipul mesajului (USER_MES)
- 100   3                                                                                                                                                              // marcheaza buffer plin
- 101   3                                                                                                                                                              // trece in starea 0, s-a terminat tratarea comenzii
- 102   3                                                                                                                                                              // afisare meniu
- 103   3              
- 104   3                                                      break;  
- 105   3              
- 106   3                      }
- 107   2              }
+  98   3                                            // stocheaza lng
+  99   3                                            // pune in bufbin tipul mesajului (USER_MES)
+ 100   3                                            // marcheaza buffer plin
+ 101   3                                            // trece in starea 0, s-a terminat tratarea comenzii
+ 102   3                                            // afisare meniu
+ 103   3        
+ 104   3                  break;  
+ 105   3        
+ 106   3          }
+ 107   2        }
  108   1      }
-*** WARNING C280 IN LINE 26 OF USERIO.C: 'dest': unreferenced local variable
-*** WARNING C280 IN LINE 26 OF USERIO.C: 'lng': unreferenced local variable
+*** WARNING C280 IN LINE 26 OF UserIO.c: 'dest': unreferenced local variable
+*** WARNING C280 IN LINE 26 OF UserIO.c: 'lng': unreferenced local variable
  109          
  110          //********************************************************************************************************
-C51 COMPILER V8.02   USERIO                                                                03/10/2025 17:13:24 PAGE 3   
+C51 COMPILER V9.59.0.0   USERIO                                                            03/16/2025 13:20:03 PAGE 3   
 
              -***
- 111          void Afisare_meniu(void){                                                       // afisare meniu initial
- 112   1              AFISARE = 1;
- 113   1              UART0_Putstr("\n\rTema ");
- 114   1              LCD_PutStr(0,0,"T");
- 115   1              UART0_Putch(TEMA + '0');
- 116   1              LCD_Putch(TEMA + '0');
- 117   1              
+ 111          void Afisare_meniu(void){               // afisare meniu initial
+ 112   1        AFISARE = 1;
+ 113   1        UART0_Putstr("\n\rTema ");
+ 114   1        LCD_PutStr(0,0,"T");
+ 115   1        UART0_Putch(TEMA + '0');
+ 116   1        LCD_Putch(TEMA + '0');
+ 117   1        
  118   1      #if(PROTOCOL == MS)
- 119   1              if(TIP_NOD == MASTER){
- 120   2                      UART0_Putstr(" Master ");       // daca programul se executa pe nodul master
- 121   2                      LCD_PutStr(LCD_line, LCD_col, " Master:");
- 122   2              }
- 123   1              else{ 
- 124   2                      UART0_Putstr(" Slave ");                                                // daca programul se executa pe un nod slave
- 125   2                      LCD_PutStr(LCD_line, LCD_col, " Slave:");
- 126   2              }
+ 119   1        if(TIP_NOD == MASTER){
+ 120   2          UART0_Putstr(" Master "); // daca programul se executa pe nodul master
+ 121   2          LCD_PutStr(LCD_line, LCD_col, " Master:");
+ 122   2        }
+ 123   1        else{ 
+ 124   2          UART0_Putstr(" Slave ");            // daca programul se executa pe un nod slave
+ 125   2          LCD_PutStr(LCD_line, LCD_col, " Slave:");
+ 126   2        }
  127   1      #elif(PROTOCOL == JT)
-                      if(TIP_NOD == JETON){
-                              UART0_Putstr(" Jeton ");
-                              LCD_PutStr(LCD_line, LCD_col, " Jeton:");
-                      }
-                      else{
-                              UART0_Putstr(" NoJet ");
-                              LCD_PutStr(LCD_line, LCD_col, "NoJet:");
-                      }
+                if(TIP_NOD == JETON){
+                  UART0_Putstr(" Jeton ");
+                  LCD_PutStr(LCD_line, LCD_col, " Jeton:");
+                }
+                else{
+                  UART0_Putstr(" NoJet ");
+                  LCD_PutStr(LCD_line, LCD_col, "NoJet:");
+                }
               #endif
- 137   1              
- 138   1              UART0_Putch(ADR_NOD + '0');                                             // afiseaza adresa nodului
- 139   1              LCD_Putch(ADR_NOD + '0');
+ 137   1        
+ 138   1        UART0_Putch(ADR_NOD + '0');           // afiseaza adresa nodului
+ 139   1        LCD_Putch(ADR_NOD + '0');
  140   1      #if(TEMA == 1 || TEMA == 3)
- 141   1              UART0_Putstr(":ASC" );                                                          // afiseaza parametrii specifici temei
- 142   1              LCD_PutStr(LCD_line, LCD_col, " ASC");
+ 141   1        UART0_Putstr(":ASC" );                // afiseaza parametrii specifici temei
+ 142   1        LCD_PutStr(LCD_line, LCD_col, " ASC");
  143   1      #elif(TEMA == 2 || TEMA == 4)
-                      UART0_Putstr(":BIN" );
-                      LCD_PutStr(LCD_line, LCD_col, " BIN");
+                UART0_Putstr(":BIN" );
+                LCD_PutStr(LCD_line, LCD_col, " BIN");
               #endif
- 147   1              UART0_Putstr("\n\r> 1-TxM 2-Stare :>"); // meniul de comenzi
- 148   1              LCD_PutStr(1,0, "1-TxM 2-Stare :>");
+ 147   1        UART0_Putstr("\n\r> 1-TxM 2-Stare :>"); // meniul de comenzi
+ 148   1        LCD_PutStr(1,0, "1-TxM 2-Stare :>");
  149   1      }
  150          
  151          
  152          //********************************************************************************************************
              -***
- 153          void Afisare_mesaj(void){                       // afisare mesaj din bufferul de receptie i
- 154   1              unsigned char j, lng, *ptr;
- 155   1              if(retea[ADR_NOD].full){                                                // exista mesaj in bufferul de receptie?
- 156   2                      lng = retea[ADR_NOD].bufbin.lng;
- 157   2                      UART0_Putstr("\n\r>Rx: De la nodul ");
- 158   2                      LCD_DelLine(1);
- 159   2                      LCD_PutStr(1,0, "Rx: ");                
- 160   2                      UART0_Putch(retea[ADR_NOD].bufbin.src + '0');                   // afiseaza adresa nodului sursa al mesajului
- 161   2                      LCD_Putch(retea[ADR_NOD].bufbin.src + '0');
- 162   2                      
- 163   2                      UART0_Putstr(": ");
- 164   2                      LCD_PutStr(LCD_line, LCD_col, ">: ");   
- 165   2                      
- 166   2                      for(j = 0, ptr = retea[ADR_NOD].bufbin.date; j < lng; j++) UART0_Putch(*ptr++); // afiseaza mesajul, car
+ 153          void Afisare_mesaj(void){             // afisare mesaj din bufferul de receptie i
+ 154   1        unsigned char j, lng, *ptr;
+ 155   1        if(retea[ADR_NOD].full){            // exista mesaj in bufferul de receptie?
+ 156   2          lng = retea[ADR_NOD].bufbin.lng;
+ 157   2          UART0_Putstr("\n\r>Rx: De la nodul ");
+ 158   2          LCD_DelLine(1);
+ 159   2          LCD_PutStr(1,0, "Rx: ");    
+ 160   2          UART0_Putch(retea[ADR_NOD].bufbin.src + '0');     // afiseaza adresa nodului sursa al mesajului
+ 161   2          LCD_Putch(retea[ADR_NOD].bufbin.src + '0');
+ 162   2          
+ 163   2          UART0_Putstr(": ");
+ 164   2          LCD_PutStr(LCD_line, LCD_col, ">: "); 
+ 165   2          
+ 166   2          for(j = 0, ptr = retea[ADR_NOD].bufbin.date; j < lng; j++) UART0_Putch(*ptr++); // afiseaza mesajul, car
              -acter cu caracter
- 167   2                      for(j = 0, ptr = retea[ADR_NOD].bufbin.date; j < lng; j++) LCD_Putch(*ptr++);           // afiseaza mesajul, cara
+ 167   2          for(j = 0, ptr = retea[ADR_NOD].bufbin.date; j < lng; j++) LCD_Putch(*ptr++);   // afiseaza mesajul, cara
              -cter cu caracter
  168   2      
-C51 COMPILER V8.02   USERIO                                                                03/10/2025 17:13:24 PAGE 4   
+C51 COMPILER V9.59.0.0   USERIO                                                            03/16/2025 13:20:03 PAGE 4   
 
- 169   2                      retea[ADR_NOD].full = 0;                                        // mesajul a fost afisat, marcheaza buffer gol
- 170   2              }
+ 169   2          retea[ADR_NOD].full = 0;          // mesajul a fost afisat, marcheaza buffer gol
+ 170   2        }
  171   1      }
  172          
  173          //********************************************************************************************************
              -***
  174          void Error(char *ptr){
- 175   1              if(AFISARE){
- 176   2                      UART0_Putstr(ptr);
- 177   2                      LCD_DelLine(1);
- 178   2                      LCD_PutStr(1,0, ptr+2);
- 179   2              }
+ 175   1        if(AFISARE){
+ 176   2          UART0_Putstr(ptr);
+ 177   2          LCD_DelLine(1);
+ 178   2          LCD_PutStr(1,0, ptr+2);
+ 179   2        }
  180   1      }
  181          
  182          unsigned char TERM_Input(void){
  183   1      
- 184   1              unsigned char ch, SFRPAGE_save = SFRPAGE;
- 185   1              
- 186   1              SFRPAGE = LEGACY_PAGE;
- 187   1              
- 188   1              ch = 0;
- 189   1              if(RI0) ch = UART0_Getch(1);
- 190   1              
- 191   1              SFRPAGE = SFRPAGE_save;
- 192   1              
- 193   1              return ch;
+ 184   1        unsigned char ch, SFRPAGE_save = SFRPAGE;
+ 185   1        
+ 186   1        SFRPAGE = LEGACY_PAGE;
+ 187   1        
+ 188   1        ch = 0;
+ 189   1        if(RI0) ch = UART0_Getch(1);
+ 190   1        
+ 191   1        SFRPAGE = SFRPAGE_save;
+ 192   1        
+ 193   1        return ch;
  194   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    503    ----
+   CODE SIZE        =    504    ----
    CONSTANT SIZE    =    124    ----
    XDATA SIZE       =      4       9
    PDATA SIZE       =   ----    ----

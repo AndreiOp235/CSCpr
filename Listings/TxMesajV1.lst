@@ -1,10 +1,10 @@
-C51 COMPILER V8.02   TXMESAJV1                                                             03/10/2025 17:13:24 PAGE 1   
+C51 COMPILER V9.59.0.0   TXMESAJV1                                                         03/16/2025 13:20:03 PAGE 1   
 
 
-C51 COMPILER V8.02, COMPILATION OF MODULE TXMESAJV1
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE TXMESAJV1
 OBJECT MODULE PLACED IN .\Objects\TxMesajV1.obj
-COMPILER INVOKED BY: D:\Apps\Keil\C51\BIN\C51.EXE TxMesajV1.c LARGE BROWSE INCDIR(.\BIG8051\Include) DEBUG OBJECTEXTEND 
-                    -PRINT(.\Listings\TxMesajV1.lst) OBJECT(.\Objects\TxMesajV1.obj)
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE TxMesajV1.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(.\BIG8051\Include) DEB
+                    -UG OBJECTEXTEND PRINT(.\Listings\TxMesajV1.lst) TABS(2) OBJECT(.\Objects\TxMesajV1.obj)
 
 line level    source
 
@@ -13,92 +13,105 @@ line level    source
    3          #include <Protocol.h>
    4          #include <UserIO.h>
    5          
-   6          extern unsigned char TIP_NOD;                   // tip nod initial: Nu Master, Nu Jeton
+   6          extern unsigned char TIP_NOD;     // tip nod initial: Nu Master, Nu Jeton
    7          
    8          extern nod retea[];
    9          
-  10          extern unsigned char timeout;           // variabila globala care indica expirare timp de asteptare eveniment
+  10          extern unsigned char timeout;   // variabila globala care indica expirare timp de asteptare eveniment
   11          //********************************************************************************************************
              -***
   12          void TxMesaj(unsigned char i);  // transmisie mesaj destinat nodului i
-  13          void bin2ascii(unsigned char ch, unsigned char *ptr);   // functie de conversie octet din binar in ASCII HEX
+  13          void bin2ascii(unsigned char ch, unsigned char *ptr); // functie de conversie octet din binar in ASCII HEX
   14          
   15          //********************************************************************************************************
              -***
-  16          void TxMesaj(unsigned char i){                                  // transmite mesajul din buffer-ul i
-  17   1              unsigned char sc, *ptr, j;
-  18   1      
-  19   1                                                                                                                                                                                              // daca este un mesaj de interogare (POLL_MES) sau JET_MES (au aceeasi valoare)
-  20   1                                                                                                                                                                                                      // calculeaza direct sc
-  21   1      
-  22   1                                                                                                                                                                                              // altfel...
-  23   1                                                                                                                                                                                                      // initializeaza SC     cu adresa HW a nodului destinatie
-  24   1                                                                                                                                                                                                      // ia in calcul adresa_hw_src
-  25   1                                                                                                                                                                                                      // ia in calcul tipul mesajului
-  26   1                                                                                                                                                                                                      // ia in calcul adresa nodului sursa al mesajului
-  27   1                                                                                                                                                                                                      // ia in calcul adresa nodului destinatie al mesajului
-  28   1                                                                                                                                                                                                      // ia in calcul lungimea datelor
-  29   1      
-  30   1                                                                                                                                                                                                      // ia in calcul datele
-  31   1                                                                                                                                                                                                      // stocheaza suma de control
-  32   1      
-  33   1                                                                                                                                                                                              // initializare pointer pe bufferul ASCII
-  34   1                                                                                                                                                                                              // pune in bufasc adresa HW dest in ASCII HEX
-  35   1                                                                                                                                                                                                      
-  36   1                                                                                                                                                                                              // pune in bufasc adresa HW src in ASCII HEX
-  37   1                                                                                                                                                                                                      
-  38   1                                                                                                                                                                                              // pune in bufasc tipul mesajului
-  39   1                                                                                                                                                                                                      
-  40   1                                                                                                                                                                                              // daca este un mesaj de date (USER_MES)
-  41   1                                                                                                                                                                                                      // pune in bufasc src
-  42   1                                                                                                                                                                                                              
-  43   1                                                                                                                                                                                                      // pune in bufasc dest
-  44   1                                                                                                                                                                                                      
-  45   1                                                                                                                                                                                                      // pune in bufasc lng date
-  46   1                                                                                                                                                                                                      
-  47   1                                                                                                                                                                                                      
-  48   1                                                                                                                                                                                                      // pune in bufasc datele
-  49   1                                                                                                                                                                                                      
-  50   1                                                                                                                                                                                                              
-  51   1                                                                                                                                                                                                      
-  52   1                                                                                                                                                                                              // pune in bufasc SC
-C51 COMPILER V8.02   TXMESAJV1                                                             03/10/2025 17:13:24 PAGE 2   
+  16          void TxMesaj(unsigned char i){          // transmite mesajul din buffer-ul i
+  17   1        unsigned char sc, *ptr, j;
+  18   1        
+  19   1        if(retea[i].bufbin.tipmes == POLL_MES)
+  20   1        {
+  21   2          sc = retea[i].bufbin.adresa_hw_dest;
+  22   2          sc += retea[i].bufbin.adresa_hw_src;
+  23   2          retea[i].bufbin.sc = sc;
+  24   2        }
+  25   1        else
+  26   1        {
+  27   2          sc = retea[i].bufbin.adresa_hw_dest;
+  28   2          sc += retea[i].bufbin.adresa_hw_src;
+  29   2          sc += retea[i].bufbin.tipmes;
+  30   2          sc += retea[i].bufbin.src;
+  31   2          sc += retea[i].bufbin.dest;
+  32   2          sc += retea[i].bufbin.lng;
+  33   2          
+  34   2          for(j = 0; j < retea[i].bufbin.lng; ++j) 
+  35   2          {
+  36   3            sc += retea[i].bufbin.date[j];
+  37   3          }
+  38   2          
+  39   2          retea[i].bufbin.sc = sc;
+  40   2        }                                     
+  41   1      
+  42   1        ptr = retea[i].bufasc + 1;                              
+  43   1        
+  44   1        bin2ascii(retea[i].bufbin.adresa_hw_dest, ptr);                     
+  45   1        ptr += 2;
+  46   1                                                    
+  47   1        bin2ascii(retea[i].bufbin.adresa_hw_src, ptr);                      
+  48   1        ptr += 2;
+  49   1                                                      
+  50   1        bin2ascii(retea[i].bufbin.tipmes, ptr);                       
+  51   1        ptr += 2;
+  52   1                                                      
+C51 COMPILER V9.59.0.0   TXMESAJV1                                                         03/16/2025 13:20:03 PAGE 2   
 
-  53   1                                                                                                                                                                                                      
-  54   1                                                                                                                                                                                              // pune in bufasc CR
-  55   1                                                                                                                                                                                              // pune in bufasc LF
-  56   1              
-  57   1                                                                                                                                                                                              // reinitializare pointer
-  58   1                                                                                                                                                                                              // transmite primul caracter al mesajului (':')
-  59   1                                                                                                                                                                                              // transmite restul caracterelor din bufferul ASCII
-  60   1                                                                                                                                                                                                      
-  61   1              
-  62   1                                                                                                                                                                                              // masterul nu goleste buffer-ul
-  63   1      
-  64   1      }
-*** WARNING C280 IN LINE 16 OF TXMESAJV1.C: 'i': unreferenced local variable
-*** WARNING C280 IN LINE 17 OF TXMESAJV1.C: 'sc': unreferenced local variable
-*** WARNING C280 IN LINE 17 OF TXMESAJV1.C: 'ptr': unreferenced local variable
-*** WARNING C280 IN LINE 17 OF TXMESAJV1.C: 'j': unreferenced local variable
-  65          
-  66          //********************************************************************************************************
+  53   1        if(retea[i].bufbin.tipmes == USER_MES)
+  54   1        {
+  55   2          bin2ascii(retea[i].bufbin.src, ptr);
+  56   2          ptr += 2;
+  57   2          
+  58   2          bin2ascii(retea[i].bufbin.dest, ptr);
+  59   2          ptr += 2;
+  60   2          
+  61   2          bin2ascii(retea[i].bufbin.lng, ptr);
+  62   2          ptr += 2;
+  63   2          
+  64   2          bin2ascii(retea[i].bufbin.date[NR_CHAR_MAX], ptr);
+  65   2          ptr += 2;
+  66   2        }   
+  67   1            
+  68   1        bin2ascii(retea[i].bufbin.sc, ptr);
+  69   1        ptr += 2;
+  70   1        
+  71   1        *ptr++ = 0x0D;
+  72   1        *ptr++ = 0x0A;
+  73   1        
+  74   1        ptr = retea[i].bufasc;
+  75   1        
+  76   1        while (*ptr) 
+  77   1        {
+  78   2          UART1_PutchPE(*ptr);
+  79   2          ptr++;
+  80   2        }
+  81   1      }
+  82          
+  83          //********************************************************************************************************
              -***
-  67          void bin2ascii(unsigned char ch, unsigned char *ptr){   // converteste octetul ch in doua caractere ASCII HE
+  84          void bin2ascii(unsigned char ch, unsigned char *ptr){ // converteste octetul ch in doua caractere ASCII HE
              -X puse la adresa ptr
-  68   1              unsigned char first, second;
-  69   1              first = (ch & 0xF0)>>4;                                         // extrage din ch primul digit
-  70   1              second = ch & 0x0F;                                                             // extrage din ch al doilea digit
-  71   1              if(first > 9) *ptr++ = first - 10 + 'A';        // converteste primul digit daca este litera
-  72   1              else *ptr++ = first + '0';                              // converteste primul digit daca este cifra
-  73   1              if(second > 9) *ptr++ = second - 10 + 'A';      // converteste al doilea digit daca este litera
-  74   1              else *ptr++ = second + '0';                             // converteste al doilea digit daca este cifra
-  75   1      }
+  85   1        unsigned char first, second;
+  86   1        first = (ch & 0xF0)>>4;           // extrage din ch primul digit
+  87   1        second = ch & 0x0F;               // extrage din ch al doilea digit
+  88   1        if(first > 9) *ptr++ = first - 10 + 'A';  // converteste primul digit daca este litera
+  89   1        else *ptr++ = first + '0';        // converteste primul digit daca este cifra
+  90   1        if(second > 9) *ptr++ = second - 10 + 'A';  // converteste al doilea digit daca este litera
+  91   1        else *ptr++ = second + '0';       // converteste al doilea digit daca este cifra
+  92   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     97    ----
+   CODE SIZE        =    800    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =   ----       9
+   XDATA SIZE       =   ----       8
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
@@ -106,4 +119,4 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  4 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
