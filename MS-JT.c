@@ -158,7 +158,7 @@ void main (void) {
 				switch(RxMesaj(i)){								// asteapta un raspuns de la slave i
 						case TMO: {
 										Error("Timeout nod ");
-										Error(i);
+										Error(&i);
 								    	break;
 									}
 
