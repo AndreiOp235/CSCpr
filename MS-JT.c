@@ -59,11 +59,12 @@ void main (void) {
 				switch(RxMesaj(ADR_NOD)){			// asteapta un mesaj de la master
 					case TMO:							
 						
-														// anunta ca nodul curent devine master	???
+						LCD_PutStr(0,0, "Yo soy master");
+						UART0_Putstr("\n\r Nodul devine maestru");  // anunta ca nodul curent devine master
 						TIP_NOD=MASTER;								// nodul curent devine master
-						Afisare_meniu();								// Afiseaza meniul de comenzi
+						Afisare_meniu();							// Afiseaza meniul de comenzi
 						STARE_COM=2;								// trece in starea 2
-														// primul slave va fi cel care urmeaza dupa noul master	????
+						i=ADR_NOD;									// primul slave va fi cel care urmeaza dupa noul master	????
 								break;
 
 					case ROK:									
@@ -87,43 +88,18 @@ void main (void) {
 						break;	// afiseaza cod eroare necunoscut, asteapta 1 sec
 				}
 #endif
-
-#if(PROTOCOL == JT)									// nodul nu detine jetonul, asteapta un mesaj util sau jetonul
-				
-				switch(RxMesaj(ADR_NOD)){				// asteapta jetonul de la master
-					
-					case TMO:								// a primit un mesaj USER_MES
-																// anunta ca nodul a regenerat jetonul 
-																// nodul curent detine jetonul
-																// Daca e permisa afisarea, afiseaza meniul de comenzi
-																// trece in starea 1
-						break;
-
-					
-					case JOK:								// a primit jetonul
-						
-						Delay(WAIT/2);						// asteapta WAIT/2 ms
-					
-																						// adresa HW dest este adr_hw_src
-																						// adresa HW src este ADR_NOD
-																						// tip mesaj = JET_MES
-																						// transmite mesajul JET_MES din bufferul ADR_NOD
-																						// nodul curent detine jetonul
-  
-				}
-#endif								
+							
 				break;
 
 			case 1:											
 
-#if(PROTOCOL == MS)										// nodul este slave, transmite mesaj catre master			
-																
-																		// cauta sa gaseasca un mesaj util de transmis	 ????
-												
-																
-																
-															
-														
+#if(PROTOCOL == MS)										// nodul este slave, transmite mesaj catre master														
+				for(i = 0; i < NR_NODURI; i++){		// initializare structuri de date
+					if(retea[i].full)				// cauta sa gaseasca un mesaj util de transmis	 ????
+						break;
+					found=1;
+				}														
+										
 				if(found)												 	// daca gaseste un nod i
 				{
 				retea[i].bufbin.adresa_hw_dest=ADR_MASTER;					// adresa HW dest este ADR_MASTER
@@ -143,11 +119,6 @@ void main (void) {
 					STARE_COM=0;											// trece in starea 0, sa astepte un nou mesaj de la master
 				break;
 #endif
-
-#if(PROTOCOL == JT)							// nodul detine jetonul, poate transmite un mesaj USER_MES				
-
-																						// asteapta procesarea mesajului la destinatie (WAIT/2 msec)
-#endif	
 				
 			break;	
 				
@@ -162,9 +133,9 @@ void main (void) {
 																	
 
 				retea[ADR_NOD].bufbin.adresa_hw_dest=i;													// adresa HW dest este i
-				if(1)
+				if(retea[i].full)
 				{
-																  // daca in bufferul i se afla un mesaj util, il transmite	 ????
+					TxMesaj(i);											  // daca in bufferul i se afla un mesaj util, il transmite	 ????
 				}
 				else
 				{
@@ -178,11 +149,6 @@ void main (void) {
 
 #endif
 
-#if(PROTOCOL == JT)											// nodul transmite jetonul urmatorului nod 		
-																				// asteapta WAIT/2 sec
-																				// trece in starea 3, sa astepte confirmarea de la nodul i ca jetonul a fost primit
-#endif
-
 			break;
 
 			case 3:
@@ -191,10 +157,8 @@ void main (void) {
 																
 				switch(RxMesaj(i)){								// asteapta un raspuns de la slave i
 						case TMO: {
-										char errMsg[20] = "Timeout nod ";  // Base string
-										errMsg[12] = i;  // Append character
-										errMsg[13] = '\0'; // Null terminate
-										Error(errMsg);
+										Error("Timeout nod ");
+										Error(i);
 								    	break;
 									}
 
@@ -217,62 +181,9 @@ void main (void) {
 					break;	// afiseaza Eroare necunoscuta, apoi asteapta 1000ms
 				}
 				STARE_COM=2;													// revine in starea 2 (a primit sau nu un raspuns de la slave, trece la urmatorul slave)
-#endif
-
-			
-#if(PROTOCOL == JT)												// asteapta confirmarea primirii jetonului de care nodul i		
-				switch(RxMesaj(i)){									// asteapta un raspuns de la nod i
-					case TMO:																// afiseaza eroare Timeout nod i
-								
-
-																							// revine in starea 2 (nu a primit raspuns)
-								break;
-					case JOK:																// a primit confirmarea transferului jetonului, revine in starea 0
-																									// nodul nu mai detine jetonul
-																									// daca afisarea e permisa, afiseaza meniul
-								break;
-					case ERI:																// afiseaza Eroare incadrare
-																									// revine in starea 0
-																									// nodul nu mai detine jetonul
-																									// afiseaza meniul
-										break;			
-					case ERA:																// afiseaza Eroare adresa
-																									// revine in starea 0
-																									// nodul nu mai detine jetonul
-																									// afiseaza meniul
-										break;			
-					
-					case CAN:																// afiseaza Mesaj incomplet
-																									// revine in starea 0
-																									// nodul nu mai detine jetonul
-																									// afiseaza meniul
-										break;			
-					
-					case TIP:																// afiseaza Tip mesaj necunoscut
-																									// revine in starea 0
-																									// nodul nu mai detine jetonul
-																									// afiseaza meniul
-										break;			
-					
-					case ESC:																// afiseaza Eroare SC
-																									// revine in starea 0
-																									// nodul nu mai detine jetonul
-																									// afiseaza meniul
-										break;			
-
-					default:																// afiseaza Eroare necunoscuta
-																									// asteapta 1000 ms
-																									// revine in starea 0
-																									// nodul nu mai detine jetonul
-																									// afiseaza meniul
-										break;			
-			}
-				
-#endif
-			
+#endif		
 			break;			
-		}
-		
+		}	
 		UserIO();							// apel functie interfata
 	}
 }
