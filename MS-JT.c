@@ -15,7 +15,7 @@ unsigned char STARE_COM = 0;		// starea initiala a FSA COM
 unsigned char STARE_IO 	= 0;		// stare initiala FSA interfata IO - asteptare comenzi
 unsigned char TIP_NOD	= 0;		// tip nod initial: Slave sau No JET
 unsigned char ADR_MASTER;			// adresa nod master - numai MS
-
+char temp;
 extern unsigned char AFISARE;		// flag permitere afisare
 
 //***********************************************************************************************************
@@ -158,7 +158,8 @@ void main (void) {
 				switch(RxMesaj(i)){								// asteapta un raspuns de la slave i
 						case TMO: {
 										Error("Timeout nod ");
-										Error(&i);
+										temp=i+'0';
+										Error(&temp);
 								    	break;
 									}
 
