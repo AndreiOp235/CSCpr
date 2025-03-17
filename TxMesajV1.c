@@ -61,8 +61,11 @@ void TxMesaj(unsigned char i){					// transmite mesajul din buffer-ul i
 		bin2ascii(retea[i].bufbin.lng, ptr);
 		ptr += 2;
 		
-		bin2ascii(retea[i].bufbin.date[NR_CHAR_MAX], ptr);
-		ptr += 2;
+		for(j = 0; j < retea[i].bufbin.lng; ++j) 
+		{
+			bin2ascii(retea[i].bufbin.date[j], ptr);
+			ptr += 2;
+		}
 	}		
 			
 	bin2ascii(retea[i].bufbin.sc, ptr);
@@ -73,10 +76,14 @@ void TxMesaj(unsigned char i){					// transmite mesajul din buffer-ul i
 	
 	ptr = retea[i].bufasc;
 	
-	while (*ptr) 
-	{
+	do {
     UART1_PutchPE(*ptr);
-    ptr++;
+		ptr++;
+	} while (*ptr != 0x0A);
+	
+	if(TIP_NOD != MASTER)
+	{
+		retea[i].full = 0;
 	}
 }
 
