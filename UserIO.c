@@ -35,72 +35,75 @@ void UserIO(void){					// interfata cu utilizatorul
 			
 			case 0:	switch(tasta){									
 				
-							case '1': 											// s-a dat comanda de transmisie mesaj								
-																							// afiseaza Tx Msg:> Nod = 
-																							// blocheaza afisarea mesajelor din task-ul de comunicatie (AFISARE = 0)
-																							// trece in starea 1
+							case '1': 																													// s-a dat comanda de transmisie mesaj		
+											LCD_PutStr(1,0, "Tx Msg:> Nod = ");													// afiseaza Tx Msg:> Nod = 
+											UART0_Putstr("Tx Msg:> Nod = ");
+											AFISARE = 0;																								// blocheaza afisarea mesajelor din task-ul de comunicatie (AFISARE = 0)
+											STARE_IO = 1;																								// trece in starea 1
 									break;
 							
-							case '2': 											// s-a dat comanda de afisare Stare Nod:
-								
-																							// blocheaza afisarea mesajelor din task-ul de comunicatie (AFISARE = 0)
-																							// trece in starea 2
+							case '2': 																													// s-a dat comanda de afisare Stare Nod:
+											AFISARE = 0;																								// blocheaza afisarea mesajelor din task-ul de comunicatie (AFISARE = 0)
+											STARE_IO = 2;																								// trece in starea 2
 							default: break;
 						}
 						break;
 									
-			case 1:													// s-a selectat nodul								
-																			
-																			// daca adresa este intre '0' - '2', mai putin adresa proprie
-																				// extrage dest din tasta
-																			// Daca este deja un mesaj in buffer ...
-																				// afiseaza Buffer plin
-			
-																				// trece in starea 0, s-a terminat tratarea comenzii '1'
-																				// afisare meniu
-																					
-																			// altfel ...
-																				// daca nodul e master
-																					// pune in bufferul dest adresa hw dest egala cu dest
-																				// altfel ...
-																					// pune in bufferul dest adresa hw dest egala cu ADR_MASTER
-								
-																				// pune in bufferul dest adresa hw sursa  egala cu ADR_NOD
-																				// pune in bufferul dest adresa nodului sursa ADR_NOD
-																				// pune in bufferul dest adresa nodului destinatie (dest)
-																				// cere introducerea mesajului
-			
-																				// initializeaza lng = 0 
-																				// trece in starea 3, sa astepte caracterele mesajului
+			case 1:													// s-a selectat nodul																					
+							if(tasta >= 0 && tasta <= 2 && tasta != ADR_NOD + '0')							// daca adresa este intre '0' - '2', mai putin adresa proprie
+											dest = tasta - '0';																									// extrage dest din tasta
+							if(retea[dest].full){																								// Daca este deja un mesaj in buffer ...
+											UART0_Putstr("Buffer Plin");																				// afiseaza Buffer plin
+											LCD_PutStr(1,0, "Buffer Plin");			
+											STARE_IO = 0;																												// trece in starea 0, s-a terminat tratarea comenzii '1'
+											Afisare_meniu();																										// afisare meniu
 																	
-																
+							}else{																															// altfel ...
+											if(TIP_NOD == MASTER){																							// daca nodul e master
+															retea[dest].bufbin.adresa_hw_dest = dest;														// pune in bufferul dest adresa hw dest egala cu dest
+											}else{																															// altfel ...
+															retea[dest].bufbin.adresa_hw_dest = ADR_MASTER;											// pune in bufferul dest adresa hw dest egala cu ADR_MASTER
+											}
+										
+											retea[dest].bufbin.adresa_hw_dest = ADR_NOD;												// pune in bufferul dest adresa hw sursa  egala cu ADR_NOD
+											retea[dest].bufbin.src = ADR_NOD;																		// pune in bufferul dest adresa nodului sursa ADR_NOD
+											retea[dest].bufbin.dest = dest;																			// pune in bufferul dest adresa nodului destinatie (dest)
+											LCD_PutStr(1,0, "Msg:> ");																						// cere introducerea mesajului
+											lng = 0;																														// initializeaza lng = 0 
+											STARE_IO = 3;																												// trece in starea 3, sa astepte caracterele mesajului
+							}						
+															
 						break;
 		
 
-			case 2:													// s-a selectat nodul								
-																			
-																		// daca adresa e intre '0'-'2'
-																			// extrage dest din tasta
-																			// Daca este deja un mesaj in buffer ...
-																				// Afiseaza Buffer plin
-																				
-																			// altfel
-																				// Afiseaza Buffer gol
-																				
-																			// trece in starea 0, s-a terminat tratarea comenzii
-																			// afisare meniu
+			case 2:																																							// s-a selectat nodul																					
+							if(tasta >= 0 && tasta <= 2){																								// daca adresa e intre '0'-'2'
+											dest = tasta - '0';																													// extrage dest din tasta
+											if(retea[dest].full){																												// Daca este deja un mesaj in buffer ...
+															UART0_Putstr("Buffer Plin");																								// Afiseaza Buffer plin
+															LCD_PutStr(1,0, "Buffer Plin");					
+											}else{																																			// altfel
+															UART0_Putstr("Buffer Gol");																									// Afiseaza Buffer gol
+															LCD_PutStr(1,0, "Buffer Gol");
+											}	
+											STARE_IO = 0;																												// trece in starea 0, s-a terminat tratarea comenzii
+											Afisare_meniu();																										// afisare meniu
+							}				
 						break;
 
 
-			case 3:														// daca tasta e diferita de CR ('\r'), de NL ('\n') si de '*' si nu s-a ajuns la limita maxima a bufferului de caractere
-																			// stocheaza codul tastei apasate in bufferul de date si incrementeaza lng
-																		// altfel (daca s-a atins nr maxim de caractere sau s-a apasat Enter ('\r') sau ('\n') sau '*')
-																			// stocheaza lng
-																			// pune in bufbin tipul mesajului (USER_MES)
-																			// marcheaza buffer plin
-																			// trece in starea 0, s-a terminat tratarea comenzii
-																			// afisare meniu
-	
+			case 3:														
+							if(tasta != '\r' && tasta != '\n' && tasta != '*' && lng < NR_CHAR_MAX){			// daca tasta e diferita de CR ('\r'), de NL ('\n') si de '*' si nu s-a ajuns la limita maxima a bufferului de caractere												
+											retea[dest].bufbin.date[lng++]=tasta;																					// stocheaza codul tastei apasate in bufferul de date si incrementeaza lng
+																																														
+																
+							}else{																																				// altfel (daca s-a atins nr maxim de caractere sau s-a apasat Enter ('\r') sau ('\n') sau '*')
+											retea[dest].bufbin.lng = lng;																								// stocheaza lng
+											retea[dest].bufbin.tipmes=USER_MES;																					// pune in bufbin tipul mesajului (USER_MES)
+											retea[dest].full=1;																													// marcheaza buffer plin
+											STARE_IO = 0;																																// trece in starea 0, s-a terminat tratarea comenzii
+											Afisare_meniu();																														// afisare meniu
+	            }
 						break;	
 	
 		}
