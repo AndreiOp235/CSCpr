@@ -54,29 +54,26 @@ unsigned char RxMesaj(unsigned char i){					// receptie mesaj
 			return ERA;									// M: adresa HW ASCII gresita, terminare receptie																							
 		}																									
 		else{													// altfel (Daca nodul este slave sau daca nu are jetonul ...)
-					do{
-						ch = UART1_Getch_TMO(2 * WAIT + ADR_NOD * WAIT);	// S: asteapta cu timeout primirea primului caracter al unui mesaj de la master
-						if(timeout == 1)			// (sau de la nodul care detine jetonul)
-						{
-							return TMO;					// S: timeout, terminare receptie, nodul va deveni master
+				do{
+					ch = UART1_Getch_TMO(2 * WAIT + ADR_NOD * WAIT);	// S: asteapta cu timeout primirea primului caracter al unui mesaj de la master
+					if(timeout == 1){			// (sau de la nodul care detine jetonul)
+						return TMO;					// S: timeout, terminare receptie, nodul va deveni master
 																	// sau va anunta ca s-a pierdut jetonul si va regenera jetonul
-																												
-						}while(ch != ':');		// S: asteapta sincronizarea cu inceputul mesajului
+					}while(ch != ':');		// S: asteapta sincronizarea cu inceputul mesajului
 														
-						ptr = retea[ADR_NOD].bufasc + 1;	// S: initializeaza pointerul in bufferul ASCII
-						*ptr++ = UART1_Getch_TMO(5);			// S: asteapta cu timeout primul caracter ASCII al adresei HW
-						if(timeout == 1)
-						{
-							return CAN;					// S: timeout, terminare receptie
-						}																				
+					ptr = retea[ADR_NOD].bufasc + 1;	// S: initializeaza pointerul in bufferul ASCII
+					*ptr++ = UART1_Getch_TMO(5);			// S: asteapta cu timeout primul caracter ASCII al adresei HW
+					if(timeout == 1){
+						return CAN;					// S: timeout, terminare receptie
+					}																				
 						
-						*ptr-- = UART1_Getch_TMO(5);		 // S: asteapta cu timeout al doilea caracter al adresei HW
-						if(timeout == 1)
-						{
-							return CAN;					// S: timeout, terminare receptie
-						}																				
+					*ptr-- = UART1_Getch_TMO(5);		 // S: asteapta cu timeout al doilea caracter al adresei HW
+					if(timeout == 1)
+					{
+						return CAN;					// S: timeout, terminare receptie
+					}																				
 
-						adresa_hw_dest = ascii2bin(ptr); // S: determina adresa HW destinatie
+					adresa_hw_dest = ascii2bin(ptr); // S: determina adresa HW destinatie
 																										
 					}while(adresa_hw_dest != ADR_NOD); // S: iese doar cand mesajul era adresat acestui nod
 				}
@@ -111,92 +108,88 @@ unsigned char RxMesaj(unsigned char i){					// receptie mesaj
 
 	if(tipmes == USER_MES)							// M+S: Daca mesajul este USER_MES
 	{
-			src = ascii2bin(ptr);						// M+S: determina sursa mesajului
-			ptr += 2;													
-			screc += src;										// M+S: ia in calcul in screc adresa src
-			dest = ascii2bin(ptr);					// M+S: determina destinatia mesajului
-			ptr += 2;
-			screc += dest;									// M+S: ia in calcul in screc adresa dest
+		src = ascii2bin(ptr);						// M+S: determina sursa mesajului
+		ptr += 2;													
+		screc += src;										// M+S: ia in calcul in screc adresa src
+		dest = ascii2bin(ptr);					// M+S: determina destinatia mesajului
+		ptr += 2;
+		screc += dest;									// M+S: ia in calcul in screc adresa dest
 		
-			if(TIP_NOD == MASTER)						// Daca nodul este master...
+		if(TIP_NOD == MASTER)						// Daca nodul este master...
+		{
+			if(retea[dest].full == 1)		// M: bufferul destinatie este deja plin, terminare receptie
 			{
-					if(retea[dest].full == 1)		// M: bufferul destinatie este deja plin, terminare receptie
-					{
-						return OVR;
-					}
+				return OVR;
 			}
-			lng = ascii2bin(ptr);						// M+S: determina lng
+		}
+		lng = ascii2bin(ptr);						// M+S: determina lng
+		ptr += 2;														
+		screc += lng;										// M+S: ia in calcul in screc lungimea datelor
+				
+		if(TIP_NOD == MASTER)						// Daca nodul este master...
+		{
+			retea[dest].bufbin.adresa_hw_src = ADR_NOD;			// M: stocheaza in bufbin adresa HW src	egala cu ADR_NOD
+			retea[dest].bufbin.tipmes = tipmes;							// M: stocheaza in bufbin tipul mesajului	
+			retea[dest].bufbin.src = src;										// M: stocheaza in bufbin adresa nodului sursa al mesajului	
+			retea[dest].bufbin.dest = dest;									// M: stocheaza in bufbin adresa nodului destinatie al mesajului	
+			retea[dest].bufbin.lng = lng;										// M: stocheaza lng
+				
+			/*********INCEPE***************/	
+			/*NU STIU DACA E BUN 1 ??? */
+			for(j = 0, ptr = retea[dest].bufbin.date; j < lng; j++)
+			{															
+				ch = ascii2bin(ptr);												// M: determina un octet de date
+				ptr += 2;															
+				*ptr = ch;
+				screc += ch;	// M: ia in calcul in screc octetul de date
+				ptr++;
+			}					
+			/*********END***************/														
+			sc = ascii2bin(ptr);													// M: determina suma de control
 			ptr += 2;														
-			screc += lng;										// M+S: ia in calcul in screc lungimea datelor
-				
-			if(TIP_NOD == MASTER)						// Daca nodul este master...
-			{
-				retea[dest].bufbin.adresa_hw_src = ADR_NOD;			// M: stocheaza in bufbin adresa HW src	egala cu ADR_NOD
-				retea[dest].bufbin.tipmes = tipmes;							// M: stocheaza in bufbin tipul mesajului	
-				retea[dest].bufbin.src = src;										// M: stocheaza in bufbin adresa nodului sursa al mesajului	
-				retea[dest].bufbin.dest = dest;									// M: stocheaza in bufbin adresa nodului destinatie al mesajului	
-				retea[dest].bufbin.lng = lng;										// M: stocheaza lng
-				
-				/*********INCEPE***************/	
-				/*NU STIU DACA E BUN 1 ??? */
-				for(j = 0, ptr = retea[dest].bufbin.date; j < lng; j++)
-				{															
-					ch = ascii2bin(ptr);												// M: determina un octet de date
-					ptr += 2;															
-					*ptr = ch;
-					screc += ch;	// M: ia in calcul in screc octetul de date
-					ptr++;
-				}					
-				/*********END***************/														
-				sc = ascii2bin(ptr);													// M: determina suma de control
-				ptr += 2;														
-				retea[dest].bufbin.sc = sc;										// M: pune sc in bufbin
+			retea[dest].bufbin.sc = sc;										// M: pune sc in bufbin
 																			
-				if(sc == screc){
-						retea[dest].full = 1;	// M: mesaj corect, marcare buffer plin
-						return ROK;														
-				}
-				else
-				{
+			if(sc == screc){
+				retea[dest].full = 1;	// M: mesaj corect, marcare buffer plin
+				return ROK;														
+			}else{
 					return ESC;						 	// M: eroare SC, terminare receptie
-				}
-																	
 			}
-			else{												// altfel (Daca nodul este slave ...)
-					retea[ADR_NOD].bufbin.src = src;	// S: stocheaza la destsrc codul nodului sursa al mesajului	
-					retea[ADR_NOD].bufbin.lng = lng;	// S: stocheaza lng
+																	
+		}else{												// altfel (Daca nodul este slave ...)
+			retea[ADR_NOD].bufbin.src = src;	// S: stocheaza la destsrc codul nodului sursa al mesajului	
+			retea[ADR_NOD].bufbin.lng = lng;	// S: stocheaza lng
 					
-				/*********INCEPE***************/	
-				/*NU STIU DACA E BUN 1 ??? */
-				for(j = 0, ptr = retea[ADR_NOD].bufbin.date; j < lng; j++)
-				{															
-					ch = ascii2bin(ptr);		// S: determina un octet de date
-					ptr += 2;															
-					*ptr = ch;
-					screc += ch;						// S: ia in calcul in screc octetul de date
-					ptr++;
-				}					
-				/*********END***************/
-				sc = ascii2bin(ptr);			// S: determina suma de control
+			/*********INCEPE***************/	
+			/*NU STIU DACA E BUN 1 ??? */
+			for(j = 0, ptr = retea[ADR_NOD].bufbin.date; j < lng; j++)
+			{															
+				ch = ascii2bin(ptr);		// S: determina un octet de date
+				ptr += 2;															
+				*ptr = ch;
+				screc += ch;						// S: ia in calcul in screc octetul de date
+				ptr++;
+			}					
+			/*********END***************/
+			sc = ascii2bin(ptr);			// S: determina suma de control
 																		
-				if(sc == screc){							// daca sc este corecta	
-				  retea[ADR_NOD].full = 1;		// S: mesaj corect, marcare buffer plin
-					return ROK;
-				}else{												// altfel ...
-					return ESC;									// S: eroare SC, terminare receptie
-				}				
-			}												
-		}else{														// daca mesajul este POLL_MES sau JET_MES
-						retea[ADR_NOD].bufbin.adresa_hw_src = adresa_hw_src;	// memoreaza adresa hw src pentru a sti de la cine a primit jetonul
-						sc = ascii2bin(ptr);	// M+S: determina suma de control
-						if(sc == screc){			// daca sc este corecta 
-						  return POK;					// M+S: returneaza POK sau JOK, au aceeasi valoare
-						}else{								// altfel...
-									return ESC; 		// M+S: eroare SC, terminare receptie
-						}
-		}						
-																
-		//return TMO;			// simuleaza asteptarea mesajului si iesirea cu timeout când nu este implementata functia
+			if(sc == screc){							// daca sc este corecta	
+				retea[ADR_NOD].full = 1;		// S: mesaj corect, marcare buffer plin
+				return ROK;
+			}else{												// altfel ...
+				return ESC;									// S: eroare SC, terminare receptie
+			}				
+		}												
+	}else{														// daca mesajul este POLL_MES sau JET_MES
+		retea[ADR_NOD].bufbin.adresa_hw_src = adresa_hw_src;	// memoreaza adresa hw src pentru a sti de la cine a primit jetonul
+		sc = ascii2bin(ptr);	// M+S: determina suma de control
+		if(sc == screc){			// daca sc este corecta 
+			return POK;					// M+S: returneaza POK sau JOK, au aceeasi valoare
+		}else{								// altfel...
+			return ESC; 		// M+S: eroare SC, terminare receptie
+		}
+	}						
+	//return TMO;			// simuleaza asteptarea mesajului si iesirea cu timeout când nu este implementata functia
 }															
 
 
