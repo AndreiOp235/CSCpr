@@ -65,7 +65,7 @@ void UserIO(void){					// interfata cu utilizatorul
 															retea[dest].bufbin.adresa_hw_dest = ADR_MASTER;											// pune in bufferul dest adresa hw dest egala cu ADR_MASTER
 											}
 										
-											retea[dest].bufbin.adresa_hw_dest = ADR_NOD;												// pune in bufferul dest adresa hw sursa  egala cu ADR_NOD
+											retea[dest].bufbin.adresa_hw_src = ADR_NOD;												// pune in bufferul dest adresa hw sursa  egala cu ADR_NOD
 											retea[dest].bufbin.src = ADR_NOD;																		// pune in bufferul dest adresa nodului sursa ADR_NOD
 											retea[dest].bufbin.dest = dest;																			// pune in bufferul dest adresa nodului destinatie (dest)
 											LCD_PutStr(1,0, "Msg:> ");																						// cere introducerea mesajului
