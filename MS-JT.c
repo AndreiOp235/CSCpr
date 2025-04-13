@@ -90,68 +90,53 @@ void main (void) {
 				break;
 
 			case 1:
-										// nodul este slave, transmite mesaj catre master
+													// nodul este slave, transmite mesaj catre master
 				for(i = 0; i < NR_NODURI; i++){		// initializare structuri de date
 					if(retea[i].full)				// cauta sa gaseasca un mesaj util de transmis	 ????
 						break;
 					found=1;
 				}
 
-				if(found)												 	// daca gaseste un nod i
+				if(found)											// daca gaseste un nod i
 				{
-				retea[i].bufbin.adresa_hw_dest=ADR_MASTER;					// adresa HW dest este ADR_MASTER
+				retea[i].bufbin.adresa_hw_dest=ADR_MASTER;			// adresa HW dest este ADR_MASTER
 				TxMesaj(i);											// transmite mesajul pentru nodul i
 				}
 				else
 				{
 																		// daca nu gaseste, construieste un mesaj in bufferul ADR_MASTER
-					retea[ADR_MASTER].bufbin.adresa_hw_dest=ADR_MASTER;			// adresa HW dest este ADR_MASTER
-					retea[ADR_MASTER].bufbin.adresa_hw_src=ADR_NOD;				// adresa HW src este ADR_NOD
-					retea[ADR_MASTER].bufbin.tipmes= POLL_MES;						// tip mesaj = POLL_MES
-					TxMesaj(ADR_MASTER);									// transmite mesajul din bufferul ADR_MASTER
+					retea[ADR_MASTER].bufbin.adresa_hw_dest=ADR_MASTER;	// adresa HW dest este ADR_MASTER
+					retea[ADR_MASTER].bufbin.adresa_hw_src=ADR_NOD;		// adresa HW src este ADR_NOD
+					retea[ADR_MASTER].bufbin.tipmes= POLL_MES;			// tip mesaj = POLL_MES
+					TxMesaj(ADR_MASTER);								// transmite mesajul din bufferul ADR_MASTER
 				}
 
-
-
-					STARE_COM=0;											// trece in starea 0, sa astepte un nou mesaj de la master
-				break;
-
+				STARE_COM=0;											// trece in starea 0, sa astepte un nou mesaj de la master
 			break;
-
-			case 2:
-											// tratare stare 2 si comutare stare
-
-				
-				// nodul este master, tratare stare 2 si comutare stare
-				if(++i==ADR_NOD)						   // selecteaza urmatorul slave (incrementeaza i si sare peste adresa proprie)
+			case 2:										// tratare stare 2 si comutare stare
+														// nodul este master, tratare stare 2 si comutare stare
+				if(++i==ADR_NOD)						// selecteaza urmatorul slave (incrementeaza i si sare peste adresa proprie)
 					i++;
 				if(i>=NR_NODURI)
 					i=0;
-
-
-				retea[i].bufbin.adresa_hw_dest=i;													// adresa HW dest este i
+				retea[i].bufbin.adresa_hw_dest=i;		// adresa HW dest este i
 				if(retea[i].full)
 				{
-
 					TxMesaj(i);											  // daca in bufferul i se afla un mesaj util, il transmite	 ????
 				}
 				else
 				{
-																  // altfel, construieste un mesaj de interogare in bufferul i
-					retea[i].bufbin.adresa_hw_src=ADR_NOD;			// adresa HW src este ADR_NOD
-					retea[i].bufbin.tipmes=POLL_MES;					// tip mesaj = POLL_MES
-					TxMesaj(i);										// transmite mesajul din bufferul i
+															// altfel, construieste un mesaj de interogare in bufferul i
+					retea[i].bufbin.adresa_hw_src=ADR_NOD;	// adresa HW src este ADR_NOD
+					retea[i].bufbin.tipmes=POLL_MES;		// tip mesaj = POLL_MES
+					TxMesaj(i);								// transmite mesajul din bufferul i
 				}
-
-				STARE_COM=3;										// trece in starea 3, sa astepte raspunsul de la slave-ul i
-
+				STARE_COM=3;								// trece in starea 3, sa astepte raspunsul de la slave-ul i
 			break;
 
-			case 3:
+			case 3:                                                 // nodul este master, asteapta mesaj de la slave
 
-// nodul este master, asteapta mesaj de la slave
-
-				switch(RxMesaj(i)){								// asteapta un raspuns de la slave i
+				switch(RxMesaj(i)){									// asteapta un raspuns de la slave i
 						case TMO: {
 										Error("\nTimeout nod ");
 										temp=i+'0';
@@ -176,7 +161,6 @@ void main (void) {
 					break;	// afiseaza Eroare necunoscuta, apoi asteapta 1000ms
 				}
 				STARE_COM=2;													// revine in starea 2 (a primit sau nu un raspuns de la slave, trece la urmatorul slave)
-
 			break;
 		}
 		UserIO();							// apel functie interfata

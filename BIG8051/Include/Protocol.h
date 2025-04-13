@@ -62,7 +62,7 @@
 #define BAUDRATE_IO 	115200		
 
 #if(TEMA == 1)
-	#define WAIT	500
+	#define WAIT	50
 #elif(TEMA == 2)
 	#define WAIT	500
 #elif(TEMA == 3)
