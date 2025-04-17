@@ -138,9 +138,12 @@ void main (void) {
 
 				switch(RxMesaj(i)){									// asteapta un raspuns de la slave i
 						case TMO: {
-										Error("\nTimeout nod ");
-										temp=i+'0';
-										Error(&temp);
+										char stringulet[17]="\r\nTime nod"";
+										stringulet[11]='0'+i;
+										stringulet[3]='i';
+										//Error("\nTimeout nod ");
+										//temp=i+'0';
+										//Error(&temp);
 								    	break;
 									}
 
