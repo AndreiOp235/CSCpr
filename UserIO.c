@@ -50,7 +50,7 @@ void UserIO(void){					// interfata cu utilizatorul
 						break;
 									
 			case 1:													// s-a selectat nodul																					
-							if(tasta - '0' >= 0 && tasta - '0'<= 2 && tasta != ADR_NOD + '0')							// daca adresa este intre '0' - '2', mai putin adresa proprie
+							if(tasta >= '0' && tasta <= '2' && tasta != ADR_NOD + '0')							// daca adresa este intre '0' - '2', mai putin adresa proprie
 											dest = tasta - '0';																									// extrage dest din tasta
 							if(retea[dest].full){																								// Daca este deja un mesaj in buffer ...
 											UART0_Putstr("Buffer Plin");																				// afiseaza Buffer plin
@@ -77,7 +77,7 @@ void UserIO(void){					// interfata cu utilizatorul
 		
 
 			case 2:																																							// s-a selectat nodul																					
-							if(tasta - '0' >= 0 && tasta - '0' <= 2){																								// daca adresa e intre '0'-'2'
+							if(tasta >= '0' && tasta <= '2'){																								// daca adresa e intre '0'-'2'
 											dest = tasta - '0';																													// extrage dest din tasta
 											if(retea[dest].full){																												// Daca este deja un mesaj in buffer ...
 															UART0_Putstr("Buffer Plin");																								// Afiseaza Buffer plin
