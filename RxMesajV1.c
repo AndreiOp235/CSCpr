@@ -32,7 +32,9 @@ unsigned char RxMesaj(unsigned char i){					// receptie mesaj
 				ch = UART1_Getch_TMO(5);
 			}
 			while(!timeout);																										
-			return ERI;									// M: eroare de incadrare, terminare receptie
+			//return ERI;
+									// M: eroare de incadrare, terminare receptie
+			return TIP;
 		}																																								
 		ptr = retea[ADR_NOD].bufasc + 1;		// M: initializare pointer in bufferul ASCII
 																											
@@ -56,7 +58,7 @@ unsigned char RxMesaj(unsigned char i){					// receptie mesaj
 				ch = UART1_Getch_TMO(5);				// M: ignora restul mesajului
 			}
 			while(!timeout);																											
-			return ERA;									// M: adresa HW ASCII gresita, terminare receptie																							
+			return ERA;
 		}
 	}else{													// altfel (Daca nodul este slave sau daca nu are jetonul ...)
 			// adreasa_hw_dest = ascii2bin(ptr);
@@ -168,7 +170,7 @@ unsigned char RxMesaj(unsigned char i){					// receptie mesaj
 			}
 		}
 			return ESC;												
-	}														// daca mesajul este POLL_MES sau JET_MES
+	}else{														// daca mesajul este POLL_MES sau JET_MES
 		retea[ADR_NOD].bufbin.adresa_hw_src = adresa_hw_src;	// memoreaza adresa hw src pentru a sti de la cine a primit jetonul
 		sc = ascii2bin(ptr);	// M+S: determina suma de control
 		if(sc == screc){			// daca sc este corecta 
@@ -176,6 +178,7 @@ unsigned char RxMesaj(unsigned char i){					// receptie mesaj
 		}								// altfel...
 			return ESC; 		// M+S: eroare SC, terminare receptie						
 	//return TMO;			// simuleaza asteptarea mesajului si iesirea cu timeout când nu este implementata functia
+	}
 }															
 
 
