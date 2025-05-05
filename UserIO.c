@@ -42,7 +42,9 @@ void UserIO(void){					// interfata cu utilizatorul
 											STARE_IO = 1;																								// trece in starea 1
 									break;
 							
-							case '2': 																													// s-a dat comanda de afisare Stare Nod:
+							case '2': 			
+											LCD_PutStr(1,0, "Adresa:> Nod = ");													// afiseaza Tx Msg:> Nod = 
+											UART0_Putstr("Adresa :> Nod = ");																										// s-a dat comanda de afisare Stare Nod:
 											AFISARE = 0;																								// blocheaza afisarea mesajelor din task-ul de comunicatie (AFISARE = 0)
 											STARE_IO = 2;																								// trece in starea 2
 							default: break;
