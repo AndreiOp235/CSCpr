@@ -26,7 +26,7 @@ unsigned char RxMesaj(unsigned char i){					// receptie mesaj
 
 		if(ch != ':')									// M: daca primul caracter nu este ':'...
 		{															// M: ignora restul mesajului
-			ch = UART1_Getch_TMO(5);
+			//ch = UART1_Getch_TMO(5);
 			do
 			{
 				ch = UART1_Getch_TMO(5);
@@ -57,8 +57,8 @@ unsigned char RxMesaj(unsigned char i){					// receptie mesaj
 			}
 			while(!timeout);																											
 			return ERA;									// M: adresa HW ASCII gresita, terminare receptie																							
-		}																									
-		else{													// altfel (Daca nodul este slave sau daca nu are jetonul ...)
+		}
+	}else{													// altfel (Daca nodul este slave sau daca nu are jetonul ...)
 			// adreasa_hw_dest = ascii2bin(ptr);
 				do{
 					ch = UART1_Getch_TMO(2 * WAIT + ADR_NOD * WAIT);	// S: asteapta cu timeout primirea primului caracter al unui mesaj de la master
@@ -81,7 +81,6 @@ unsigned char RxMesaj(unsigned char i){					// receptie mesaj
 					}
 																										
 				}while(adresa_hw_dest != ADR_NOD); // S: iese doar cand mesajul era adresat acestui nod
-				}
 	}																								
 	ptr++;														
 	do{	
@@ -108,7 +107,7 @@ unsigned char RxMesaj(unsigned char i){					// receptie mesaj
 	{
 		return TIP;												// M+S: cod functie eronat, terminare receptie
 	}
-  screc += tipmes;										// M+S: ia in calcul in screc codul functiei
+	screc += tipmes;										// M+S: ia in calcul in screc codul functiei
 
 	if(tipmes == USER_MES)							// M+S: Daca mesajul este USER_MES
 	{
@@ -125,6 +124,7 @@ unsigned char RxMesaj(unsigned char i){					// receptie mesaj
 			{
 				return OVR;
 			}
+		}
 		lng = ascii2bin(ptr);						// M+S: determina lng
 		ptr += 2;														
 		screc += lng;										// M+S: ia in calcul in screc lungimea datelor
@@ -139,13 +139,10 @@ unsigned char RxMesaj(unsigned char i){					// receptie mesaj
 				
 			for(j = 0; j < lng; j++)
 			{															
-				retea[ADR_NOD].bufbin.date[j] = ascii2bin(ptr);
+				retea[dest].bufbin.date[j] = ascii2bin(ptr);
 				ptr += 2;
+				screc += retea[dest].bufbin.date[j];
 			}																	
-			for(j = 0; j < lng; j++)
-			{															
-				screc += retea[ADR_NOD].bufbin.date[j];
-			}
 			sc = ascii2bin(ptr);
 																			
 			if(sc == screc){
@@ -161,19 +158,15 @@ unsigned char RxMesaj(unsigned char i){					// receptie mesaj
 			{															
 				retea[ADR_NOD].bufbin.date[j] = ascii2bin(ptr);
 				ptr += 2;
-			}																	
-			for(j = 0; j < lng; j++)
-			{															
 				screc += retea[ADR_NOD].bufbin.date[j];
-			}
+			}																	
 			sc = ascii2bin(ptr);
 																			
 			if(sc == screc){
-				retea[dest].full = 1;	// M: mesaj corect, marcare buffer plin
+				retea[ADR_NOD].full = 1;	// M: mesaj corect, marcare buffer plin
 				return ROK;														
 			}
-			return ESC;
-		}												
+			return ESC;												
 	}														// daca mesajul este POLL_MES sau JET_MES
 		//retea[ADR_NOD].bufbin.adresa_hw_src = adresa_hw_src;	// memoreaza adresa hw src pentru a sti de la cine a primit jetonul
 		sc = ascii2bin(ptr);	// M+S: determina suma de control
