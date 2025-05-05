@@ -149,7 +149,7 @@ unsigned char RxMesaj(unsigned char i){					// receptie mesaj
 				retea[dest].full = 1;	// M: mesaj corect, marcare buffer plin
 				return ROK;														
 			}
-		}															
+		}else{															
 														// altfel (Daca nodul este slave ...)
 			retea[ADR_NOD].bufbin.src = src;	// S: stocheaza la destsrc codul nodului sursa al mesajului	
 			retea[ADR_NOD].bufbin.lng = lng;	// S: stocheaza lng
@@ -166,9 +166,10 @@ unsigned char RxMesaj(unsigned char i){					// receptie mesaj
 				retea[ADR_NOD].full = 1;	// M: mesaj corect, marcare buffer plin
 				return ROK;														
 			}
+		}
 			return ESC;												
 	}														// daca mesajul este POLL_MES sau JET_MES
-		//retea[ADR_NOD].bufbin.adresa_hw_src = adresa_hw_src;	// memoreaza adresa hw src pentru a sti de la cine a primit jetonul
+		retea[ADR_NOD].bufbin.adresa_hw_src = adresa_hw_src;	// memoreaza adresa hw src pentru a sti de la cine a primit jetonul
 		sc = ascii2bin(ptr);	// M+S: determina suma de control
 		if(sc == screc){			// daca sc este corecta 
 			return POK;					// M+S: returneaza POK sau JOK, au aceeasi valoare
