@@ -73,16 +73,16 @@ void main (void) {
 						STARE_COM = 1;
 						break;	// si trebuie sa raspunda
 					case CAN:
-						Error("\nMesaj incomplet");
+						Error("\r\nMesaj incomplet");
 						break;	// afiseaza eroare Mesaj incomplet
 					case TIP:
-						Error("\nTip mesaj necunoscut");
+						Error("\r\nTip mesaj necunoscut");
 						break;	// afiseaza eroare Tip mesaj necunoscut
 					case ESC:
-						Error("\nEroare SC");
+						Error("\r\nEroare SC");
 						break;	// afiseaza Eroare SC
 					default:
-						Error("\ncod UNK");
+						Error("\r\ncod UNK");
 						Delay(1000);
 						break;	// afiseaza cod eroare necunoscut, asteapta 1 sec
 				}
@@ -139,9 +139,9 @@ void main (void) {
 				switch(RxMesaj(i)){									// asteapta un raspuns de la slave i
 						case TMO: {
 										char stringulet[17]="\r\nTime nod"";
-										stringulet[11]='0'+i;
-										stringulet[3]='i';
-										//Error("\nTimeout nod ");
+										stringulet[12]='0'+i;
+										stringulet[4]='i';
+										//Error("\r\nTimeout nod ");
 										//temp=i+'0';
 										//Error(&temp);
 								    	break;
@@ -151,15 +151,15 @@ void main (void) {
 						if(retea[ADR_NOD].bufbin.tipmes==USER_MES)	 // a primit un mesaj de date, il afiseaza
 							  Afisare_mesaj();
 					break;												// a primit un mesaj de interogare, trece mai departe
-					case ERI: Error("\nEroare incadrare");						break;	// afiseaza Eroare incadrare
+					case ERI: Error("\r\nEroare incadrare");						break;	// afiseaza Eroare incadrare
 					case ERA: Error("\nEroare adresa");							break;	// afiseaza Eroare adresa
 					case TIP: Error("\nTip mesaj necunoscut");					break;	// afiseaza Tip mesaj necunoscut
-					case OVR: Error("\nEroare adresa");							break;	// afiseaza Eroare suprapunere
-					case ESC: Error("\nEroare adresa");							break;	// afiseaza Eroare SC
-					case CAN: Error("\nEroare adresa");							break;	// afiseaza mesaj incomplet
+					case OVR: Error("\r\nEroare adresa");							break;	// afiseaza Eroare suprapunere
+					case ESC: Error("\r\nEroare adresa");							break;	// afiseaza Eroare SC
+					case CAN: Error("\r\nEroare adresa");							break;	// afiseaza mesaj incomplet
 
 					default:
-					Error("\nEroare adresa");
+					Error("\r\nEroare adresa");
 					Delay(1000);
 					break;	// afiseaza Eroare necunoscuta, apoi asteapta 1000ms
 				}
