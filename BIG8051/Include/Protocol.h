@@ -11,7 +11,7 @@
 
 //***********************************************************************************************************
 
-#define ADR_NOD 	1			// adresa nodului curent - se modifica dupa caz
+#define ADR_NOD 	0			// adresa nodului curent - se modifica dupa caz
 
 #define	MS			1
 #define	JT			0
@@ -62,7 +62,7 @@
 #define BAUDRATE_IO 	115200		
 
 #if(TEMA == 1)
-	#define WAIT	200
+	#define WAIT	500
 #elif(TEMA == 2)
 	#define WAIT	500
 #elif(TEMA == 3)
@@ -71,7 +71,7 @@
 	#define WAIT	200
 #endif
 
-#define NR_NODURI	3						// 3 noduri Ã®n retea
+#define NR_NODURI	3						// 3 noduri în retea
 #define NR_CHAR_MAX	10
 
 typedef struct {
