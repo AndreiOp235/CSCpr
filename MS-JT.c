@@ -15,7 +15,7 @@ unsigned char STARE_COM = 0;		// starea initiala a FSA COM
 unsigned char STARE_IO 	= 0;		// stare initiala FSA interfata IO - asteptare comenzi
 unsigned char TIP_NOD	= 0;		// tip nod initial: Slave sau No JET
 unsigned char ADR_MASTER;			// adresa nod master - numai MS
-char temp;
+
 extern unsigned char AFISARE;		// flag permitere afisare
 
 //***********************************************************************************************************
@@ -73,16 +73,16 @@ void main (void) {
 						STARE_COM = 1;
 						break;	// si trebuie sa raspunda
 					case CAN:
-						Error("\r\nMesaj incomplet");
+						Error("\n\rMesaj incomplet");
 						break;	// afiseaza eroare Mesaj incomplet
 					case TIP:
-						Error("\r\nTip mesaj necunoscut");
+						Error("\n\rTip mesaj necunoscut");
 						break;	// afiseaza eroare Tip mesaj necunoscut
 					case ESC:
-						Error("\r\nEroare SC");
+						Error("\n\rEroare SC");
 						break;	// afiseaza Eroare SC
 					default:
-						Error("\r\ncod UNK");
+						Error("\n\rcod UNK");
 						Delay(1000);
 						break;	// afiseaza cod eroare necunoscut, asteapta 1 sec
 				}
@@ -90,11 +90,14 @@ void main (void) {
 				break;
 
 			case 1:
-													// nodul este slave, transmite mesaj catre master
+				found=0;									// aveam omisie aici
 				for(i = 0; i < NR_NODURI; i++){		// initializare structuri de date
-					if(retea[i].full)				// cauta sa gaseasca un mesaj util de transmis	 ????
-						break;
-					found=1;
+					if(retea[i].full)
+						// cauta sa gaseasca un mesaj util de transmis	 
+						{
+							found=1;
+							break;
+						}
 				}
 
 				if(found)											// daca gaseste un nod i
@@ -158,15 +161,15 @@ void main (void) {
 						if(retea[ADR_NOD].bufbin.tipmes==USER_MES)	 // a primit un mesaj de date, il afiseaza
 							  Afisare_mesaj();
 					case POK:			break;												// a primit un mesaj de interogare, trece mai departe
-					case ERI: Error("\r\nEroare incadrare");						break;	// afiseaza Eroare incadrare
-					case ERA: Error("\nEroare adresa");							break;	// afiseaza Eroare adresa
-					case TIP: Error("\nTip mesaj necunoscut");					break;	// afiseaza Tip mesaj necunoscut
-					case OVR: Error("\r\nEroare OVR");							break;	// afiseaza Eroare suprapunere
-					case ESC: Error("\r\nEroare SC");							break;	// afiseaza Eroare SC
-					case CAN: Error("\r\nMes. incomplet");							break;	// afiseaza mesaj incomplet
+					case ERI: Error("\n\rEroare incadrare");						break;	// afiseaza Eroare incadrare
+					case ERA: Error("\n\rEroare adresa");							break;	// afiseaza Eroare adresa
+					case TIP: Error("\n\rTip mesaj necunoscut");					break;	// afiseaza Tip mesaj necunoscut
+					case OVR: Error("\n\rEroare OVR");							break;	// afiseaza Eroare suprapunere
+					case ESC: Error("\n\rEroare SC");							break;	// afiseaza Eroare SC
+					case CAN: Error("\n\rMes. incomplet");							break;	// afiseaza mesaj incomplet
 
 					default:
-					Error("\r\nEroare nec");
+					Error("\n\rEroare nec");
 					Delay(1000);
 					break;	// afiseaza Eroare necunoscuta, apoi asteapta 1000ms
 				}
