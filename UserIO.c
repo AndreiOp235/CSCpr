@@ -71,6 +71,7 @@ void UserIO(void){					// interfata cu utilizatorul
 											retea[dest].bufbin.src = ADR_NOD;																		// pune in bufferul dest adresa nodului sursa ADR_NOD
 											retea[dest].bufbin.dest = dest;																			// pune in bufferul dest adresa nodului destinatie (dest)
 											LCD_PutStr(1,0, "Msg:> ");																						// cere introducerea mesajului
+											UART0_Putstr("Msg:> ");
 											lng = 0;																														// initializeaza lng = 0 
 											STARE_IO = 3;																												// trece in starea 3, sa astepte caracterele mesajului
 							}						

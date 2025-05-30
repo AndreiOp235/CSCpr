@@ -58,8 +58,8 @@ void main (void) {
 				switch(RxMesaj(ADR_NOD)){			// asteapta un mesaj de la master
 					case TMO:
 
-						LCD_PutStr(0,0, "Yo soy master");
-						UART0_Putstr("\n\r Nodul devine maestru");  // anunta ca nodul curent devine master
+						Error("Yo soy master");
+						Error("\n\r Nodul devine maestru");  // anunta ca nodul curent devine master
 						TIP_NOD=MASTER;								// nodul curent devine master
 						Afisare_meniu();							// Afiseaza meniul de comenzi
 						STARE_COM=2;								// trece in starea 2
@@ -115,10 +115,18 @@ void main (void) {
 			break;
 			case 2:										// tratare stare 2 si comutare stare
 														// nodul este master, tratare stare 2 si comutare stare
-				if(++i==ADR_NOD)						// selecteaza urmatorul slave (incrementeaza i si sare peste adresa proprie)
+				do
+				{
+					i++;
+					if(i==NR_NODURI)
+						i=0;
+				}
+				while(i==ADR_NOD);
+			
+			/*if(++i==ADR_NOD)						// selecteaza urmatorul slave (incrementeaza i si sare peste adresa proprie)
 					i++;
 				if(i>=NR_NODURI)
-					i=0;
+					i=0;*/
 				retea[i].bufbin.adresa_hw_dest=i;		// adresa HW dest este i
 				if(retea[i].full)
 				{
@@ -138,28 +146,27 @@ void main (void) {
 
 				switch(RxMesaj(i)){									// asteapta un raspuns de la slave i
 						case TMO: {
-										char stringulet[17]="\r\nTime nod"";
-										stringulet[12]='0'+i;
-										stringulet[4]='i';
-										//Error("\r\nTimeout nod ");
-										//temp=i+'0';
-										//Error(&temp);
+										Error("\r\nTime nod ");
+										if (AFISARE){
+											UART0_Putch(i+'0');
+											LCD_Putch(i+'0');
+										}
 								    	break;
 									}
 
 					case ROK:
 						if(retea[ADR_NOD].bufbin.tipmes==USER_MES)	 // a primit un mesaj de date, il afiseaza
 							  Afisare_mesaj();
-					break;												// a primit un mesaj de interogare, trece mai departe
+					case POK:			break;												// a primit un mesaj de interogare, trece mai departe
 					case ERI: Error("\r\nEroare incadrare");						break;	// afiseaza Eroare incadrare
 					case ERA: Error("\nEroare adresa");							break;	// afiseaza Eroare adresa
 					case TIP: Error("\nTip mesaj necunoscut");					break;	// afiseaza Tip mesaj necunoscut
-					case OVR: Error("\r\nEroare adresa");							break;	// afiseaza Eroare suprapunere
-					case ESC: Error("\r\nEroare adresa");							break;	// afiseaza Eroare SC
-					case CAN: Error("\r\nEroare adresa");							break;	// afiseaza mesaj incomplet
+					case OVR: Error("\r\nEroare OVR");							break;	// afiseaza Eroare suprapunere
+					case ESC: Error("\r\nEroare SC");							break;	// afiseaza Eroare SC
+					case CAN: Error("\r\nMes. incomplet");							break;	// afiseaza mesaj incomplet
 
 					default:
-					Error("\r\nEroare adresa");
+					Error("\r\nEroare nec");
 					Delay(1000);
 					break;	// afiseaza Eroare necunoscuta, apoi asteapta 1000ms
 				}

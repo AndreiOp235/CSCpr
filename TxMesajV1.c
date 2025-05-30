@@ -76,10 +76,9 @@ void TxMesaj(unsigned char i){					// transmite mesajul din buffer-ul i
 	
 	ptr = retea[i].bufasc;
 	
-	do {	// de verificat aici
+	do {
     UART1_PutchPE(*ptr);
-		ptr++;
-	} while (*ptr != 0x0A);
+	} while (*ptr++ != 0x0A);
 	
 	if(TIP_NOD != MASTER)
 	{
